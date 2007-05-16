@@ -8,6 +8,17 @@ Example:
 
   unbini market_commodities.ini effects_explosion.ini
 
+The unpacked files will have the same name but with a .txt extension
+added. For the above example, the unpacked files will be:
+
+  market_commodities.ini.txt
+  effects_explosion.ini.txt
+
+When repacking the files with bini (bini.exe), the .txt extention is
+removed. If an original file already exists, it is backed up (see
+BACKUP below). If no .txt extension is on the file, .ini is added
+instead.
+
 These tools also have extra options for analyzing the BINI files and
 making special edits. Use the -h option flag to see these options:
 

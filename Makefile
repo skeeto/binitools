@@ -16,7 +16,7 @@ LDFLAGS =
 
 # Dist files
 sources = unbini.c convert.c convert.h pool.h pool.c parse.y scan.l Makefile
-docs = README HACKING COPYING COPYRIGHT AUTHORS BUGS NEWS ChangeLog
+docs = README HACKING COPYING COPYRIGHT AUTHORS BUGS NEWS ChangeLog VERSION
 distfiles = $(sources) $(docs)
 binfiles = bini.exe unbini.exe README COPYING COPYRIGHT AUTHORS NEWS ChangeLog
 
