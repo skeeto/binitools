@@ -1,0 +1,21 @@
+["Sec tion"]
+"numbers" = 1, -1, 10, -10, 1.000000, -1.000000
+"Spaced Entry" = "space->    <-space", "more->   <-space"
+"break" = "=================="
+"empty" = "", "Abc"
+
+["[hard=section]"]
+"expression" = "0* + 1", 1, 30
+":" = "colon_entry"
+"121234" = "number_entry"
+"equals_val" = "= assignment"
+"filename" = "C:\\freelancer\\freelancer.exe"
+"backslash" = "This is a backslash: \\"
+
+["empty section"]
+
+["lastsection"]
+"empty entry"
+"entry" = "-value"
+"-----------------"
+

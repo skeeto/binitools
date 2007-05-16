@@ -1,0 +1,80 @@
+Freelancer BINI tools
+
+To use the tools, just list all files that you want to covert on the
+command line. You can achieve this effect in Windows by dragging and
+dropping any files you want converted onto the executable files.
+
+These tools also have extra options for analyzing the BINI files and
+making special edits. Use the -h option flag to see these options.
+
+Both tools have been tested with every BINI file that comes with
+Freelancer and are able to freely convert back and forth with no data
+loss or damage. These tools are meant to be used in conjunction with
+one another. Do not mix these tools with any other BINI tools as they
+will not work. These BINI tools are the only known tools that can
+convert back and forth from text format without error.
+
+TEXT FILES
+----------
+
+All of the *.ini files in the Freelancer directory tree are binary
+encoded files (dubbed BINI for binary ini?) that are not easily
+editable by hand. These two tools allow a user to convert this BINI
+files into an easily editable text file using "unbini". Once editing
+is complete, the text file is converted back into a BINI file.
+
+The text version looks like this:
+
+
+["Section Title"]
+"entry name" = 1, -1, 1.0, -1.0, "a string"
+"empty entry"
+"third entry" = "C:\\freelancer\\freelancer.exe"
+
+["An Empty Section"]
+
+
+All non-quoted whitespace is ignored, so you can freely add space and
+empty lines and such as much as you want.
+
+Every string value, including section and entry names, must be wrapped
+in a quote pair. Quotes and backslashes inside the quotes must be
+escaped with a backslash:
+
+"A \"quoted\" word and a backslash: \\."
+
+will be interpreted as:
+
+A "quoted" word and a backslash \.
+
+All other characters are legal inside the quotes.
+
+Why all these quotes? This gaurantees that the BINI file and the text
+file are equally expressive and that there is a one-to-one mapping of
+each BINI file to each text version.
+
+COMMENTS
+--------
+
+You can also comment your text file with a # character. Comments are
+not encoded into the BINI file in any way. This means unpacking your
+own BINI files will not recover your comments.
+
+Example:
+
+["Section"]  # This is a comment
+"entry" = 10 # This is another comment
+
+# a comment for a group of entries:
+"entry1"
+"entry2" = "some value" 
+
+BACKUPS
+-------
+
+When bini converts a text file back into a BINI file, it will check to
+see if the BINI file already exists. If so, it will back it up (adding
+a .bak extension), with one exception. If the backup already exists,
+no backup is made. This way, the tools will automatically back up your
+original Freelancer files and never overwrite those backups. You can
+restore the original file at anytime by removing the .bak extension.

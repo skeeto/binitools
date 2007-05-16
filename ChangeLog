@@ -1,0 +1,13 @@
+2007-05-16  Christopher Wellons  <ccw129@psu.edu>
+
+	* parse.y: yyerror() now describes the current filename when
+	reporting errors
+
+	* scan.l: moved comment priority down in the scanner
+
+	* NEWS, ChangeLog, BUGS, AUTHORS, COPYING, COPYRIGHT: I
+	initilalized all of these files.
+
+	* README, HACKING: I wrote up all of the documentation into these
+	two files.
+
