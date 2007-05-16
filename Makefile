@@ -1,7 +1,43 @@
-# Copyright (C) Christopher Wellons 2007
+# Makefile - Freelancer BINI tools
+# Copyright (C) 2007 Christopher Wellons <ccw129@psu.edu>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+######################################################################
 # 
 # This Makefile is meant to be used with GNU make. Other versions of
 # make may not handle this file correctly.
+#
+# Important targets are:
+#
+# all
+#   builds both binaries: bini and unbini
+#
+# clean
+#   cleans all build generated files
+#
+# test
+#   tests the tools against all BINI files in a tests/ directory
+#
+# zip
+#   creates zip of binaries for binary distribution
+#
+# tarball
+#   creates source distribution
+#
+######################################################################
 
 # Select a C compiler (such as mingw32)
 CC = mingw32-gcc
@@ -50,9 +86,9 @@ unbini.o : unbini.c pool.h
 # Clean targets
 .PHONY : clean test tarball zip
 clean :
-	$(RM) $(solutions) $(OBJ)
+	$(RM) $(solutions) $(OBJ) y.tab.h
 
-# Place all .ini files to be used for testing in a test/
+# Place all BINI files to be used for testing in a tests/
 # directory. This target will test the tools on each one.
 test :
 	find tests/ -name '*ini' -exec test.sh {} \;
