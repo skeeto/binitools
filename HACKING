@@ -24,6 +24,9 @@ make (GNU's version)
 And if you want to use the test script (test.sh) you will also want a
 Bourne shell, such as bash.
 
+If you want to build a tarball or zip with binaries, you will want to
+install tar and zip.
+
 Since the project doesn't use autoconf yet, you will need to make a
 small adjustment to the Makefile depending on what compiler you are
 using. If you are using Cygwin and have mingw32 installed, no changes
