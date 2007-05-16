@@ -4,8 +4,14 @@ To use the tools, just list all files that you want to covert on the
 command line. You can achieve this effect in Windows by dragging and
 dropping any files you want converted onto the executable files.
 
+Example:
+
+  unbini market_commodities.ini effects_explosion.ini
+
 These tools also have extra options for analyzing the BINI files and
-making special edits. Use the -h option flag to see these options.
+making special edits. Use the -h option flag to see these options:
+
+  unbini -h
 
 Both tools have been tested with every BINI file that comes with
 Freelancer and are able to freely convert back and forth with no data
@@ -36,6 +42,19 @@ The text version looks like this:
 
 All non-quoted whitespace is ignored, so you can freely add space and
 empty lines and such as much as you want.
+
+NUMBERS
+-------
+
+There are two types of numbers: integers and floating points. Integers
+are signed and have no decimal component. Floating points are any
+signed number with a decimal. It is strongly advised that, when
+editing Freelancer files, you keep floats as floats (by leaving the
+decimal point in the number) and integers are integers (by having no
+decimal point).
+
+STRINGS
+-------
 
 Every string value, including section and entry names, must be wrapped
 in a quote pair. Quotes and backslashes inside the quotes must be

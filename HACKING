@@ -37,6 +37,12 @@ changes made to either tool that may make it incompatible with the
 other. To tests for compatibility problems, you can use the test tools
 (described below).
 
+A final note: this code will only work on a computer architectures
+with little endian encoding, such as Intel x86 computers. Because
+Freelancer is only avliable on these systems, there is little reason
+to fix this. The BINI tools are useless on your Solaris workstation
+and your PowerPC based Mac, even though you can build them there.
+
 Now that you have the tools you need to build the project, here are
 the relevant source files:
 
@@ -206,6 +212,7 @@ BINI file. This script follows these steps:
 - repack the file, again saving diagnostic info
 - unpacks the BINI and compares the diagnostic
 - compares both unpacked versions
+- compares files lengths of packed versions
 
 The test will not report errors for differences in the order of
 strings in the sting table. We don't want it to do this because the
@@ -217,8 +224,33 @@ all .ini files inside the tests/ directory (which you must create). I
 recommend loading all your Freelancer .ini files into this directory
 so that you can verify that all the tools work flawlessly with each
 one. (Note that there are 4 .ini files that are not BINI files that
-come with Freelancer)
+come with Freelancer.) I suggest you dump the output of the test to a
+temporary file for review:
+
+  make test > test-result.txt
 
 The second test tool is the file benchtest.ini.txt. It contains many
 of the silly things you will find in the real Freelancer files. The
 tools must always be able to handle the BINI version of this file.
+
+STYLE
+-----
+
+The only thing there is to say about style is the use of indent. All
+of the code that goes onto revision control is formated with GNU
+indent, with one option: -npsl. For the lex and yacc files, I use
+Emacs to filter the C code through indent. For all other files, you
+can use use indent directly:
+
+indent -npsl unbini.c
+
+SECURITY
+--------
+
+Please try to stick with safe memory functions when doing your string
+operations. For example, use snprintf() instead of sprintf() and
+strncpy() instead of strcpy(). Without these, it may be possible for
+someone to write a malicious BINI file that could execute virus code
+when unpacked. A good way to check yourself is to build the program on
+OpenBSD. The GNU compiler on OpenBSD does extra checks for these bad
+memory functions.
