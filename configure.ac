@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT([binitools],[1.0],[ccw129@psu.edu])
+AC_INIT([binitools],[1.0.1],[ccw129@psu.edu])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_SRCDIR([parse.y])
 AC_CONFIG_HEADER([config.h])

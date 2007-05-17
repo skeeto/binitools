@@ -229,19 +229,9 @@ strings in the sting table. We don't want it to do this because the
 string table can be rearranged and your BINI file is still valid (as
 long as the data section is updated for the new string table).
 
-The Makefile contains a "test" target for running the test script on
-all .ini files inside the tests/ directory (which you must create). I
-recommend loading all your Freelancer .ini files into this directory
-so that you can verify that all the tools work flawlessly with each
-one. (Note that there are 4 .ini files that are not BINI files that
-come with Freelancer.) I suggest you dump the output of the test to a
-temporary file for review:
-
-  make test > test-result.txt
-
-The second test tool is the file benchtest.ini.txt. It contains many
-of the silly things you will find in the real Freelancer files. The
-tools must always be able to handle the BINI version of this file.
+The sample test BINI file is benchtest.ini.txt. It contains many of
+the silly things you will find in the real Freelancer files. The tools
+must always be able to handle the BINI version of this file.
 
 STYLE
 -----
