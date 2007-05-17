@@ -16,24 +16,31 @@ tools.
 If you want to build the tools with either GNU/Linux and Cygwin, you
 will need the following:
 
-gcc (or mingw32 for Windows builds)
-bison
-flex
-make (GNU's version)
+  gcc (or mingw32 for Windows builds)
+  bison
+  flex
+  make
+
+If you grabbed the source from the repository, you will need the GNU
+auto tools (use "autoreconf -i" to set up the build environment).
+
+  autoconf
+  automake
 
 And if you want to use the test script (test.sh) you will also want a
 Bourne shell, such as bash.
 
-If you want to build a tarball or zip with binaries, you will want to
-install tar and zip.
+When you supply no options to the configure script, it will build the
+tools for your platform. In the case of cygwin, you will get cygwin
+only executables. If you need Windows binaries, install the mingw32
+compiler and run configure with (on cygwin):
 
-Since the project doesn't use autoconf yet, you will need to make a
-small adjustment to the Makefile depending on what compiler you are
-using. If you are using Cygwin and have mingw32 installed, no changes
-necessary. Otherwise, you will want to go into the Makefile and change
-the CC variable to your compiler (such as gcc):
+  ./configure --host=mingw32
 
-CC = gcc
+Normally, you can build everything with the normal configure, make:
+
+  ./configure
+  make
 
 These BINI tools are meant to be used together, so be mindful of
 changes made to either tool that may make it incompatible with the
