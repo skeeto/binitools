@@ -17,8 +17,6 @@
  * 02110-1301, USA.
  */
 
-char *version = "0.1";
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -28,11 +26,14 @@ char *version = "0.1";
 #include <sys/stat.h>		/* fstat() */
 #include "pool.h"		/* memory allocation pool */
 
-#ifdef _WIN32
-#undef HAS_MMAP
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+char *version = PACKAGE_VERSION;
+#else
+char *version = "";
 #endif
 
-#if HAS_MMAP
+#if HAVE_MMAP
 #include <sys/mman.h>		/* mmap() */
 #endif
 
@@ -56,7 +57,7 @@ void bini_close ();		/* close BINI file */
 struct stat inistat;		/* used to get the ini file information */
 size_t filesize;		/* size of the ini file */
 int bini_eof;			/* end of non-string-table */
-#if HAS_MMAP
+#if HAVE_MMAP
 void *fileptr;			/* pointer to the beginning of the file */
 int inifile;			/* file handle */
 void *read_ptr;			/* next read location */
@@ -162,7 +163,7 @@ int main (int argc, char **argv)
   if (verbose && do_nothing)
     printf ("Doing nothing.\n");
 
-#if HAS_MMAP
+#if HAVE_MMAP
   if (verbose)
     printf ("Reading file with mmap()\n");
 #endif
@@ -455,7 +456,7 @@ void *xmalloc (size_t size)
   return out;
 }
 
-#if HAS_MMAP
+#if HAVE_MMAP
 
 /* memory mapped I/O version */
 void bini_open (char *file)
@@ -503,7 +504,9 @@ char *bini_str_tab (size_t offset)
 /* memory mapped I/O close */
 void bini_close ()
 {
+#ifdef HAVE_MUNMAP
   munmap (fileptr, filesize);
+#endif
   close (inifile);
   if (!do_nothing)
     fclose (outfile);

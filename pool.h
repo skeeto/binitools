@@ -25,6 +25,10 @@
 #ifndef POOL_H
 #define POOL_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 extern int default_pool_size;
 
 typedef struct subpool_t

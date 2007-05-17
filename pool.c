@@ -20,6 +20,10 @@
 #include <stdlib.h>
 #include "pool.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 int default_pool_size = 512;
 int miss_limit = 8;
 

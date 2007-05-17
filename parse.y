@@ -18,8 +18,6 @@
  */
 
 %{
-char *version = "0.1";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +25,13 @@ char *version = "0.1";
 #include <unistd.h>
 #include <sys/stat.h>
 #include "convert.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+char *version = PACKAGE_VERSION;
+#else
+char *version = "";
+#endif
 
 /* lex declarations */
 extern FILE *yyin;

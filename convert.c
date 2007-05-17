@@ -24,6 +24,10 @@
 #include "pool.h"
 #include "convert.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 int num_sec, num_entry, num_val;	/* counters */
 int num_int, num_float, num_string;	/* value counters */
 struct section *sec_list, *cur_sec;

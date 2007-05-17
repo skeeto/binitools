@@ -21,7 +21,7 @@
 #define YY_NO_UNPUT
 #include <stdlib.h>
 #include <string.h>
-#include "y.tab.h"
+#include "parse.h"
 #include "convert.h"
 
 /* handle strings*/

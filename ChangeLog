@@ -1,5 +1,8 @@
 2007-05-16  Christopher Wellons  <ccw129@psu.edu>
 
+	* all: converted project to the GNU build system (autoconf,
+	automake, autoheader, etc)
+
 	* parse.y: yyerror() now describes the current filename when
 	reporting errors
 
