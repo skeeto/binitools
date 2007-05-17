@@ -5,7 +5,7 @@ AC_PREREQ(2.61)
 
 AC_INIT([binitools],[1.0],[ccw129@psu.edu])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_SRCDIR([parse.y])
 AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
@@ -18,10 +18,18 @@ AC_PROG_LEX
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
+AC_FUNC_ALLOCA
+AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h malloc.h stddef.h stdint.h stdlib.h string.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT8_T
 AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
@@ -30,7 +38,7 @@ AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_FUNC_STAT
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([memmove munmap strchr strerror])
+AC_CHECK_FUNCS([memmove memset munmap strchr strerror])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

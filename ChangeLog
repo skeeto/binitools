@@ -1,3 +1,7 @@
+2007-05-17  Christopher Wellons  <ccw129@psu.edu>
+
+	* all: switched to types with explicit widths (uint32_t etc)
+
 2007-05-16  Christopher Wellons  <ccw129@psu.edu>
 
 	* all: converted project to the GNU build system (autoconf,

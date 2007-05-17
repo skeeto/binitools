@@ -56,8 +56,8 @@ void backup_file (char *filename);
 %defines
 
 %union {
-  unsigned short str;
-  int i;
+  uint16_t str;
+  int32_t i;
   float f;
 }
 

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <stdint.h>
 #include "pool.h"
 #include "convert.h"
 
@@ -45,7 +46,7 @@ int summarize;
 typedef struct str_node
 {
   char *str;
-  unsigned short ptr;
+  uint16_t ptr;
 } str_node;
 
 str_node **str_tab;		/* string table */
@@ -72,7 +73,7 @@ void *xmalloc (size_t size)
 }
 
 /* handles the string table */
-unsigned short add_str (char *str)
+uint16_t add_str (char *str)
 {
   /* trim leading quote */
   str++;
@@ -114,12 +115,12 @@ unsigned short add_str (char *str)
 
   str_tab[str_cnt - 1] = (str_node *) xmalloc (sizeof (str_node));
 
-  unsigned short ptr = 0;
   str_tab[str_cnt - 1]->str = pool_strdup (str);
 
   /* chop off ending quote */
   str_tab[str_cnt - 1]->str[strlen (str) - 1] = 0;
 
+  uint16_t ptr = 0;
   if (str_cnt > 1)
     {
       /* not first entry */
@@ -173,7 +174,7 @@ void convert_init ()
 
 }
 
-void add_sec (unsigned short name)
+void add_sec (uint16_t name)
 {
   if (verbose)
     printf ("Section: %d\n", name);
@@ -199,7 +200,7 @@ void add_sec (unsigned short name)
   cur_sec->next = NULL;
 }
 
-void add_entry (unsigned short name)
+void add_entry (uint16_t name)
 {
   if (verbose)
     printf ("Entry: %d\n", name);
@@ -219,7 +220,7 @@ void add_entry (unsigned short name)
   cur_entry->next = NULL;
 }
 
-void add_val (char type, int i, float f, unsigned short s)
+void add_val (uint8_t type, int32_t i, float f, uint16_t s)
 {
   if (verbose)
     printf ("Value: type %d -> %d %f %d\n", type, i, f, s);
@@ -272,11 +273,11 @@ void write_ini (char *filename)
       exit (EXIT_FAILURE);
     }
 
-  /* determine size of compressed section */
-  int data_chunk = num_sec * 4 + num_entry * 3 + num_val * 5 + 12;
+  /* determine size of data section */
+  uint32_t data_chunk = num_sec * 4 + num_entry * 3 + num_val * 5 + 12;
 
   /* write header (12 bytes) */
-  int ver = 1;
+  uint32_t ver = 1;
   fwrite ("BINI", 4, 1, outfile);
   fwrite (&ver, 4, 1, outfile);
   fwrite (&data_chunk, 4, 1, outfile);

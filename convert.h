@@ -20,22 +20,24 @@
 #ifndef CONVERT_H
 #define CONVERT_H
 
+#include <stdint.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 struct section
 {
-  unsigned short str_offset;	/* string offset */
-  unsigned short num_entry;	/* number of entries in section */
+  uint16_t str_offset;		/* string offset */
+  uint16_t num_entry;		/* number of entries in section */
   struct entry *elist;		/* entry list */
   struct section *next;		/* next section */
 };
 
 struct entry
 {
-  unsigned short str_offset;	/* string offset */
-  char num_val;			/* number of values in entry */
+  uint16_t str_offset;		/* string offset */
+  uint8_t num_val;		/* number of values in entry */
   struct value *vlist;		/* value list */
   struct entry *next;		/* next entry */
 };
@@ -45,9 +47,9 @@ struct value
   char type;			/* value type */
   union
   {
-    int i;			/* integer value */
+    int32_t i;			/* integer value */
     float f;			/* float value */
-    int s;			/* string offset value */
+    uint32_t s;			/* string offset value */
   };
   struct value *next;		/* next value */
 };
@@ -56,12 +58,12 @@ struct value
 void convert_init ();
 
 /* for building the tables */
-void add_sec (unsigned short name);
-void add_entry (unsigned short name);
-void add_val (char type, int i, float f, unsigned short s);
+void add_sec (uint16_t name);
+void add_entry (uint16_t name);
+void add_val (uint8_t type, int32_t i, float f, uint16_t s);
 
 /* add string to the string table and return a BINI pointer */
-unsigned short add_str (char *instr);
+uint16_t add_str (char *instr);
 
 /* writes the tables to file */
 void write_ini (char *filename);

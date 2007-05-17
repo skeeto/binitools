@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdint.h>
 #include <errno.h>
 #include <sys/stat.h>		/* fstat() */
 #include "pool.h"		/* memory allocation pool */
@@ -71,9 +72,9 @@ unsigned int read_pos;
 FILE *outfile = NULL;		/* output file */
 
 /* header information */
-char *bini;
-int ver;
-unsigned int str_offset = 0;
+uint8_t *bini;
+uint32_t ver;
+uint32_t str_offset = 0;
 
 /* options */
 int verbose = 0;		/* program verbosity */
@@ -226,9 +227,9 @@ int unbini (char *inname, char *outname, int append)
   bini_open (inname);
 
   /* extract the header information */
-  bini = (char *) bini_read (4);
-  ver = *((int *) bini_read (4));
-  str_offset = *((int *) bini_read (4));
+  bini = (uint8_t *) bini_read (4);
+  ver = *((uint32_t *) bini_read (4));
+  str_offset = *((uint32_t *) bini_read (4));
 
   /* check for valid header */
   if (memcmp (bini, "BINI", 4) || ver != 1)
@@ -250,7 +251,7 @@ int unbini (char *inname, char *outname, int append)
   if (print_str_tab)
     {
       char *cur_str;
-      unsigned short offset = 0;
+      uint16_t offset = 0;
       while (offset < filesize - str_offset)
 	{
 	  cur_str = str_tab + offset;
@@ -279,12 +280,12 @@ int unbini (char *inname, char *outname, int append)
   /* section data */
   char *sec_str = NULL;
   int sec_total = 0;		/* total number of sections */
-  unsigned short num_entry;
+  uint16_t num_entry;
 
   /* entry data */
   char *entry_str = NULL;
   int entry_total = 0;		/* total number of entries */
-  unsigned char num_val;
+  uint8_t num_val;
 
   /* value data */
   int val_total = 0;		/* total number of values */
@@ -305,9 +306,9 @@ int unbini (char *inname, char *outname, int append)
       sec_total++;
 
       /* extract section information */
-      sec_str = *((unsigned short *) bini_read (2)) + str_tab;
+      sec_str = *((uint16_t *) bini_read (2)) + str_tab;
       sec_str = str_expand (sec_str);
-      num_entry = *((unsigned short *) bini_read (2));
+      num_entry = *((uint16_t *) bini_read (2));
 
       entry_total += num_entry;
       if (verbose)
@@ -317,13 +318,13 @@ int unbini (char *inname, char *outname, int append)
 	fprintf (outfile, "[\"%s\"]\n", sec_str);
 
       /* extract each section */
-      unsigned short entry_count;
+      uint16_t entry_count;
       for (entry_count = 0; entry_count < num_entry; entry_count++)
 	{
 	  /* extract entry information */
-	  entry_str = (*(unsigned short *) bini_read (2)) + str_tab;
+	  entry_str = (*(uint16_t *) bini_read (2)) + str_tab;
 	  entry_str = str_expand (entry_str);
-	  num_val = *(unsigned char *) bini_read (1);
+	  num_val = *(uint8_t *) bini_read (1);
 
 	  val_total += num_val;
 	  if (verbose)
@@ -338,11 +339,12 @@ int unbini (char *inname, char *outname, int append)
 		fprintf (outfile, "\"%s\" = ", entry_str);
 	    }
 
-	  char val_count;
-	  char *str, val_type;	/* used to check string value */
+	  uint8_t val_count;
+	  char *str;		/* used to check string value */
+	  uint8_t val_type;
 	  for (val_count = 0; val_count < num_val; val_count++)
 	    {
-	      val_type = *((char *) bini_read (1));
+	      val_type = *((uint8_t *) bini_read (1));
 	      if (verbose)
 		printf ("Value: type %d\n", val_type);
 
@@ -352,7 +354,7 @@ int unbini (char *inname, char *outname, int append)
 		case 1:	/* integer */
 		  int_total++;
 		  if (!do_nothing)
-		    fprintf (outfile, "%d", *((int *) bini_read (4)));
+		    fprintf (outfile, "%d", *((int32_t *) bini_read (4)));
 		  break;
 		case 2:	/* float */
 		  float_total++;
@@ -361,7 +363,7 @@ int unbini (char *inname, char *outname, int append)
 		  break;
 		case 3:	/* string */
 		  string_total++;
-		  str = *((int *) bini_read (4)) + str_tab;
+		  str = *((uint32_t *) bini_read (4)) + str_tab;
 		  str = str_expand (str);
 		  if (!do_nothing)
 		    fprintf (outfile, "\"%s\"", str);
@@ -486,12 +488,18 @@ void bini_open (char *file)
 /* memory mapped I/O read function */
 void *bini_read (size_t size)
 {
+  if (bini_eof == 1)
+    return NULL;
+
   void *old_ptr = read_ptr;
   read_ptr += size;		/* move read pointer up */
+
   if (read_ptr >= fileptr + str_offset && str_offset != 0)
-    {
-      bini_eof = 1;
-    }
+    bini_eof = 1;
+
+  if (read_ptr >= fileptr + filesize)
+    bini_eof = 1;
+
   return old_ptr;
 }
 
