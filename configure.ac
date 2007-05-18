@@ -30,6 +30,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
+AC_C_BIGENDIAN([AC_MSG_ERROR([These binitools cannot be used on big-endian systems. Sorry.])])
 
 # Checks for library functions.
 AC_FUNC_MALLOC

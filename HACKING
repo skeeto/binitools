@@ -15,22 +15,24 @@ definitely use it if you aren't already. It turns a crummy Windows
 system into a more manageable POSIX environment with all the nice GNU
 tools.
 
-If you want to build the tools with either GNU/Linux and Cygwin, you
-will need the following:
+If you want to build the tools from a source tarball with either
+GNU/Linux and Cygwin, you will need the following:
 
   gcc (or mingw32 for Windows builds)
+  make
+  sh
+
+If you are building from the repository or need to modify scan.l or
+parse.y, you will also need the following:
+
   bison
   flex
-  make
 
-If you grabbed the source from the repository, you will need the GNU
-auto tools (use "autoreconf -i" to set up the build environment).
+Also if you grabbed the source from the repository, you will need the
+GNU auto tools (use "autoreconf -i" to set up the build environment).
 
   autoconf
   automake
-
-And if you want to use the test script (test.sh) you will also want a
-Bourne shell, such as bash.
 
 When you supply no options to the configure script, it will build the
 tools for your platform. In the case of cygwin, you will get cygwin
