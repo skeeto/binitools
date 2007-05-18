@@ -36,6 +36,9 @@ fi
 # Return value (assume success)
 RET_VAL=0
 
+# So we don't have to use "./" on everything
+PATH=$PATH:.
+
 # Test each argument
 while [ $# -ge 1 ]; do
 
