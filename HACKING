@@ -1,3 +1,5 @@
+binitools Development Information
+
 If you want to modify or fix these BINI tools, this is the place to
 look. There are two tools to worry about: bini and unbini. 
 
@@ -212,11 +214,24 @@ existing string and will not add to the table. The current
 implementation is not terribly efficient, but will be improved in the
 future.
 
-TEST TOOLS
+TEST SUITE
 ----------
 
-There is a bash script (test.sh) for testing the tools on any given
-BINI file. This script follows these steps:
+The build system has a built in test suite. Simply invoke make with
+the check target to test against the supplied BINI file.
+
+  make check
+
+The supplied BINI file tests/simple.ini is a short BINI files that
+contains many of the quirks of the Freelancer BINI files. You can list
+any other files you would like to be tested in the tests/
+directory. It is suggested that you copy all of the Freelancer BINI
+files here. Doing this will allow them all to be checked when running
+'make check'. When making a distribution (with 'make dist'), only
+simple.ini will be included.
+
+The actual script that does the testing is a bash script -
+test.sh. This script follows these steps:
 
 - unpacks the BINI file dumping out diagnostic info into temporary files
 - repack the file, again saving diagnostic info
@@ -228,10 +243,6 @@ The test will not report errors for differences in the order of
 strings in the sting table. We don't want it to do this because the
 string table can be rearranged and your BINI file is still valid (as
 long as the data section is updated for the new string table).
-
-The sample test BINI file is benchtest.ini.txt. It contains many of
-the silly things you will find in the real Freelancer files. The tools
-must always be able to handle the BINI version of this file.
 
 STYLE
 -----
