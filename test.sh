@@ -27,11 +27,19 @@
 # number of secions, entries and values. The text versions are also
 # compared.
 
-# Check for existing argument
-if [ $# -ne 1 ]; then
+# Check for arguments
+if [ $# -eq 0 ]; then
     echo 1>&2 Usage: $0 FILE
     exit 127
 fi
+
+# Return value (assume success)
+RET_VAL=0
+
+# Test each argument
+while [ $# -ge 1 ]; do
+
+echo Checking $1
 
 # BINI -> text
 unbini -qs -o temp1.ini.txt $1 > temp1_sum
@@ -52,23 +60,27 @@ ls -l temp1.ini | awk '{print $5}' > temp2_size
 if ! diff temp1_sum temp2_sum &> /dev/null; then
     echo Summary diff : $1
     diff temp1_sum temp2_sum
+    RET_VAL=-1
 fi
 
 # Compare string tables
 if ! diff temp1_tab temp2_tab &> /dev/null; then
     echo String table diff : $1
     diff temp1_tab temp2_tab
+    RET_VAL=-1
 fi
 
 # Compare file sizes
 if ! diff temp1_size temp2_size &> /dev/null; then
     echo Size diff : $1
+    RET_VAL=-1
 fi
 
 # Compare unbini outputs
 if ! diff temp1.ini.txt temp2.ini.txt &> /dev/null; then
     echo txt diff : $1
     diff temp1.ini.txt temp2.ini.txt
+    RET_VAL=-1
 fi
 
 # Remove temporary files
@@ -81,3 +93,8 @@ rm temp2_size
 rm temp1.ini.txt
 rm temp1.ini
 rm temp2.ini.txt
+
+shift
+done
+
+exit $RET_VAL

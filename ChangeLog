@@ -1,5 +1,7 @@
 2007-05-17  Christopher Wellons  <ccw129@psu.edu>
 
+	* Makefile.am: Added test suite.
+
 	* all: switched to types with explicit widths (uint32_t etc)
 
 2007-05-16  Christopher Wellons  <ccw129@psu.edu>
