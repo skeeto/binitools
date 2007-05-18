@@ -36,10 +36,11 @@ GNU auto tools (use "autoreconf -i" to set up the build environment).
 
 When you supply no options to the configure script, it will build the
 tools for your platform. In the case of cygwin, you will get cygwin
-only executables. If you need Windows binaries, install the mingw32
-compiler and run configure with (on cygwin):
+only executables. If you need Windows binaries, install the mingw
+packages and set like CFLAGS environmental variable when calling
+configure, like so:
 
-  ./configure --host=mingw32
+  CFLAGS=-mno-cygwin ./configure
 
 Normally, you can build everything with the normal configure, make:
 
