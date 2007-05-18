@@ -1,3 +1,8 @@
+2007-05-18  Christopher Wellons  <ccw129@psu.edu>
+
+	* Makefile.am: Added parse.g to EXTRA_DIST. The test suite is now
+	fully working with 'make distcheck'.
+
 2007-05-17  Christopher Wellons  <ccw129@psu.edu>
 
 	* Makefile.am: Added test suite.

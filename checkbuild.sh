@@ -22,4 +22,4 @@
 # This will use the test script to test all BINI files in the tests
 # directory.
 
-find tests/ -name '*ini' | xargs ./test.sh
+find $srcdir/tests/ -name '*ini' | xargs $srcdir/test.sh
