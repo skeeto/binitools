@@ -201,6 +201,8 @@ int main (int argc, char **argv)
   convert_init ();
 
   char *outname;
+  struct stat file_stat;
+  int is_stdin = 0;
   int i;
   for (i = optind; i < argc; i++)
     {
@@ -210,23 +212,33 @@ int main (int argc, char **argv)
       /* open input file */
       line_num = 1;
       cur_file = argv[i];
-      yyin = fopen (argv[i], "r");
-      if (yyin == NULL)
+      if (strcmp (cur_file, "-") == 0)
 	{
-	  fprintf (stderr, "%s: failed to open %s: %s\n",
-		   progname, argv[i], strerror (errno));
-	  break;
+	  yyin = stdin;
+	  is_stdin = 1;
 	}
+      else
+	{
+	  yyin = fopen (argv[i], "r");
+	  is_stdin = 0;
 
-      struct stat file_stat;
-      stat (argv[i], &file_stat);
-      if (file_stat.st_size > 1)	/* check for empty file */
+	  if (yyin == NULL)
+	    {
+	      fprintf (stderr, "%s: failed to open %s: %s\n",
+		       progname, argv[i], strerror (errno));
+	      break;
+	    }
+
+	  stat (argv[i], &file_stat);
+	}
+      if (is_stdin || file_stat.st_size > 1)	/* check for empty file */
 	{
 	  /* parse the file */
 	  yyparse ();
 	}
 
-      fclose (yyin);
+      if (!is_stdin)
+	fclose (yyin);
 
       if (!concat && !do_nothing)
 	{
@@ -270,6 +282,9 @@ char *get_outname (char *inname, char *argin)
   need_free = 0;
   if (argin == NULL)
     {
+      if (strcmp (inname, "-") == 0)
+	return NULL;		/* use stdout */
+
       if (strcmp (".txt", inname + strlen (inname) - 4) != 0)
 	{
 	  /* add .ini */
@@ -292,13 +307,21 @@ char *get_outname (char *inname, char *argin)
 	}
     }
   else
-    outname = argin;
+    {
+      if (strcmp (argin, "-") == 0)
+	return NULL;		/* use stdout */
+
+      outname = argin;
+    }
 
   return outname;
 }
 
 void backup_file (char *filename)
 {
+  if (filename == NULL)
+    return;			/* stdout is being used */
+
   /* check for file existance */
   if (access (filename, R_OK) != 0)
     return;

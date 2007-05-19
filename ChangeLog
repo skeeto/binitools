@@ -1,5 +1,7 @@
 2007-05-18  Christopher Wellons  <ccw129@psu.edu>
 
+	* parse.y, convert.c: Added stdin and stdout options to bini.
+
 	* Makefile.am: Added parse.g to EXTRA_DIST. The test suite is now
 	fully working with 'make distcheck'.
 

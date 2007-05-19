@@ -263,9 +263,18 @@ void add_val (uint8_t type, int32_t i, float f, uint16_t s)
 void write_ini (char *filename)
 {
   if (verbose)
-    printf ("Writing %s ...\n", filename);
+    {
+      if (filename != NULL)
+	printf ("Writing %s ...\n", filename);
+      else
+	fprintf (stderr, "Writing to stdout ...\n");
+    }
 
-  FILE *outfile = fopen (filename, "wb");
+  FILE *outfile;
+  if (filename != NULL)
+    outfile = fopen (filename, "wb");
+  else
+    outfile = stdout;
   if (outfile == NULL)
     {
       fprintf (stderr, "bini: failed to open %s: %s\n",
@@ -327,7 +336,8 @@ void write_ini (char *filename)
       fwrite (cur_str, strlen (cur_str) + 1, 1, outfile);
     }
 
-  fclose (outfile);
+  if (filename != NULL)
+    fclose (outfile);
 
   /* print summary */
   if (summarize)
@@ -344,7 +354,7 @@ void write_ini (char *filename)
   free_pool (mpool);
   free (str_tab);
 
-  if (verbose)
+  if (verbose && filename != NULL)
     printf ("Done writing %s!\n", filename);
 }
 

@@ -19,6 +19,11 @@ removed. If an original file already exists, it is backed up (see
 BACKUP below). If no .txt extension is on the file, .ini is added
 instead.
 
+If a file is supplied to bini with the name "-", bini will use
+stdin. If "-" is supplied as an input file and no output file is
+specified, or of "-" is specified as the output file, bini will use
+stdout for output.
+
 These tools also have extra options for analyzing the BINI files and
 making special edits. Use the -h option flag to see these options:
 
