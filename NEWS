@@ -1,5 +1,16 @@
 Freelancer BINI tools
 
+1.0.1 (5-19-07)
+
+	* There have been stdin and stdout options added to both
+	tools. By using a "-" as the filename, bini and unbini will
+	use stdin and stdout as necessary. See README for details.
+
+	* Another change is the loss of mmap(). All mmap() code has
+	been removed. This should simplify the unbini.c source code.
+
 1.0 (5-15-07)
-	Now that I am satisfied with the tools and also that they pass
-	all tests, I am releasing my BINI tools to the world. Enjoy!
+
+	* Now that I am satisfied with the tools and also that they
+	pass all tests, I am releasing my BINI tools to the
+	world. Enjoy!
