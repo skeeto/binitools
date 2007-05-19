@@ -1,5 +1,7 @@
 2007-05-18  Christopher Wellons  <ccw129@psu.edu>
 
+	* configure.ac: Removed unneeded libintl.h check from configure.
+
 	* unbini.c: Removed mmap() implementation. All input is now
 	regular file input and output. This should greatly simplify
 	unbini.c code.
