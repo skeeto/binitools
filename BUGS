@@ -1,1 +1,4 @@
-- no known bugs
+* The Windows builds will sometimes flip the sign bit on floating
+  point numbers that are equal to zero. Because -0 is the same as +0,
+  this should make no difference to Freelancer. It will cause the test
+  suite to fail, however.
