@@ -54,7 +54,7 @@ other. To tests for compatibility problems, you can use the test tools
 
 A final note: this code will only work on a computer architectures
 with little endian encoding, such as Intel x86 computers. Because
-Freelancer is only avliable on these systems, there is little reason
+Freelancer is only available on these systems, there is little reason
 to fix this. The BINI tools are useless on your Solaris workstation
 and your PowerPC based Mac, even though you can build them there.
 
@@ -89,12 +89,8 @@ UNBINI
 Let's begin with unbini because it is simpler. unbini is a bit
 complicated due to the dual nature of file I/O. Originally, I wrote
 the program to use mmap(). I generally develop code in Windows so I
-didn't know that Windows is missing mmap(). I didn't want to toss out
-mmap() because I liked it so much and it speeds up the program by 50%
-compared to normal file I/O.
-
-If you are building the tools with mingw32, you won't be using mmap(),
-so you can safely ignore these parts of the code.
+didn't know that Windows is missing mmap(). Since version 1.0.1,
+mmap() is no longer used.
 
 I will now describe the BINI format:
 
@@ -251,7 +247,7 @@ STYLE
 -----
 
 The only thing there is to say about style is the use of indent. All
-of the code that goes onto revision control is formated with GNU
+of the code that goes onto revision control is formatted with GNU
 indent, with one option: -npsl. For the lex and yacc files, I use
 Emacs to filter the C code through indent. For all other files, you
 can use use indent directly:
@@ -268,3 +264,32 @@ someone to write a malicious BINI file that could execute virus code
 when unpacked. A good way to check yourself is to build the program on
 OpenBSD. The GNU compiler on OpenBSD does extra checks for these bad
 memory functions.
+
+WINDOWS BUILDS
+--------------
+
+If you want to provide Windows builds, it is suggested that you use
+the following setup.
+
+All files should be shielded inside a folder. This folder should then
+be zipped with a zip file of the same name with "-bin.zip"
+concatenated. This folder name should match the distribution folder
+name. For example, if the current version is 1.2.1, the zip file
+should be:
+
+  binitools-1.2.1-bin.zip
+
+And the folder should be named:
+
+  binitools-1.2.1
+
+This folder should contain the following files:
+
+  bini.exe
+  unbini.exe
+  README
+  BUGS
+  COPYING
+  AUTHORS
+  ChangeLog
+  NEWS
