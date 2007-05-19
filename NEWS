@@ -6,6 +6,11 @@ Freelancer BINI tools
 	tools. By using a "-" as the filename, bini and unbini will
 	use stdin and stdout as necessary. See README for details.
 
+	* The build system has been switched from a simple Makefile to
+        the GNU biuld system using autoconf, automake, etc. This is
+        cleaned up the code base and allowed for more reliable tests
+        to make sure all releases are solid.
+
 	* Another change is the loss of mmap(). All mmap() code has
 	been removed. This should simplify the unbini.c source code.
 
