@@ -1,5 +1,11 @@
 2007-05-18  Christopher Wellons  <ccw129@psu.edu>
 
+	* unbini.c: Removed mmap() implementation. All input is now
+	regular file input and output. This should greatly simplify
+	unbini.c code.
+
+	* unbini.c: Added stdin and stdout to unbini.
+
 	* parse.y, convert.c: Added stdin and stdout options to bini.
 
 	* Makefile.am: Added parse.g to EXTRA_DIST. The test suite is now

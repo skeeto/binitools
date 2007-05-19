@@ -35,11 +35,10 @@ AC_C_BIGENDIAN([AC_MSG_ERROR([These binitools cannot be used on big-endian syste
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
-AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_FUNC_STAT
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([memmove memset munmap strchr strerror])
+AC_CHECK_FUNCS([memmove memset strchr strerror])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

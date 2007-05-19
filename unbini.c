@@ -34,10 +34,6 @@ char *version = PACKAGE_VERSION;
 char *version = "";
 #endif
 
-#if HAVE_MMAP
-#include <sys/mman.h>		/* mmap() */
-#endif
-
 /* size of each chunk */
 int header_size = 12;		/* size of the header */
 int sec_size = 4;		/* size of a section */
@@ -54,19 +50,15 @@ void *bini_read (size_t size);	/* read from BINI file */
 char *bini_str_tab (size_t offset);
 void bini_close ();		/* close BINI file */
 
+/* Used when reading from stdin */
+FILE *get_stdin ();
+
 /* input file data */
 struct stat inistat;		/* used to get the ini file information */
 size_t filesize;		/* size of the ini file */
 int bini_eof;			/* end of non-string-table */
-#if HAVE_MMAP
-void *fileptr;			/* pointer to the beginning of the file */
-int inifile;			/* file handle */
-void *read_ptr;			/* next read location */
-#else
 FILE *inifile;			/* input file handle */
-pool_t *ini_pool;		/* pool for allocating input values */
 unsigned int read_pos;
-#endif
 
 /* output file info */
 FILE *outfile = NULL;		/* output file */
@@ -164,11 +156,6 @@ int main (int argc, char **argv)
   if (verbose && do_nothing)
     printf ("Doing nothing.\n");
 
-#if HAVE_MMAP
-  if (verbose)
-    printf ("Reading file with mmap()\n");
-#endif
-
   /* check for missing filenames */
   if (argc - optind < 1)
     {
@@ -201,7 +188,14 @@ int main (int argc, char **argv)
       xmal_pool = create_pool (128);
 
       /* unpack the file */
-      sum += unbini (argv[i], arg_outfile, concat * (i - optind));
+      char *cur_file = argv[i];
+      if (strcmp (cur_file, "-") == 0)
+	{
+	  /* Fetch file from stdin */
+	  cur_file = NULL;
+	  inifile = get_stdin ();
+	}
+      sum += unbini (cur_file, arg_outfile, concat * (i - optind));
 
       /* destroy the memory pool */
       free_pool (xmal_pool);
@@ -216,15 +210,16 @@ int main (int argc, char **argv)
 int unbini (char *inname, char *outname, int append)
 {
   /* create output filename if one wasn't selected */
-  if (outname == NULL && !do_nothing)
+  if (inname != NULL && outname == NULL && !do_nothing)
     {
       size_t size = strlen (inname) + 5;
       outname = (char *) xmalloc (size);
       snprintf (outname, size, "%s.txt", inname);
     }
 
-  /* Open/map the input file */
-  bini_open (inname);
+  /* Open the input file */
+  if (inname != NULL)
+    bini_open (inname);
 
   /* extract the header information */
   bini = (uint8_t *) bini_read (4);
@@ -234,6 +229,8 @@ int unbini (char *inname, char *outname, int append)
   /* check for valid header */
   if (memcmp (bini, "BINI", 4) || ver != 1)
     {
+      if (inname == NULL)
+	inname = "stdin";
       fprintf (stderr, "%s: %s is not a valid BINI file\n", progname, inname);
       bini_close ();
       return 1;
@@ -267,14 +264,19 @@ int unbini (char *inname, char *outname, int append)
       if (append)
 	method = "a";
 
-      outfile = fopen (outname, method);
-      if ((int) outfile == -1)
+      if (outname != NULL)
 	{
-	  fprintf (stderr, "%s: failed to open output file %s: %s\n",
-		   progname, outname, strerror (errno));
-	  bini_close ();
-	  return 1;
+	  outfile = fopen (outname, method);
+	  if ((int) outfile == -1)
+	    {
+	      fprintf (stderr, "%s: failed to open output file %s: %s\n",
+		       progname, outname, strerror (errno));
+	      bini_close ();
+	      return 1;
+	    }
 	}
+      else
+	outfile = stdout;
     }
 
   /* section data */
@@ -384,7 +386,7 @@ int unbini (char *inname, char *outname, int append)
 	fprintf (outfile, "\n");
     }
 
-  /* unmap/close the files */
+  /* close the files */
   bini_close ();
 
   /* print summary */
@@ -458,70 +460,6 @@ void *xmalloc (size_t size)
   return out;
 }
 
-#if HAVE_MMAP
-
-/* memory mapped I/O version */
-void bini_open (char *file)
-{
-  inifile = open (file, O_RDONLY);
-  if (inifile == -1)
-    {
-      fprintf (stderr, "%s: failed to open input file %s: %s\n",
-	       progname, file, strerror (errno));
-      exit (EXIT_FAILURE);
-    }
-  fstat (inifile, &inistat);
-  filesize = inistat.st_size;
-  fileptr = mmap (NULL, filesize, PROT_READ, MAP_PRIVATE, inifile, 0);
-  if ((int) fileptr == -1)
-    {
-      fprintf (stderr, "%s: failed to map file %s: %s\n",
-	       progname, file, strerror (errno));
-      close (inifile);
-      exit (EXIT_FAILURE);
-    }
-
-  read_ptr = fileptr;
-  bini_eof = 0;
-}
-
-/* memory mapped I/O read function */
-void *bini_read (size_t size)
-{
-  if (bini_eof == 1)
-    return NULL;
-
-  void *old_ptr = read_ptr;
-  read_ptr += size;		/* move read pointer up */
-
-  if (read_ptr >= fileptr + str_offset && str_offset != 0)
-    bini_eof = 1;
-
-  if (read_ptr >= fileptr + filesize)
-    bini_eof = 1;
-
-  return old_ptr;
-}
-
-/* memory mapped I/O string table fetch */
-char *bini_str_tab (size_t offset)
-{
-  return (char *) (fileptr + offset);
-}
-
-/* memory mapped I/O close */
-void bini_close ()
-{
-#ifdef HAVE_MUNMAP
-  munmap (fileptr, filesize);
-#endif
-  close (inifile);
-  if (!do_nothing)
-    fclose (outfile);
-}
-
-#else
-
 /* file I/O open */
 void bini_open (char *file)
 {
@@ -537,9 +475,6 @@ void bini_open (char *file)
   stat (file, &inistat);
   filesize = inistat.st_size;
 
-  /* prepare memory pool */
-  ini_pool = create_pool (512);
-
   read_pos = 0;
   bini_eof = 0;
 }
@@ -548,7 +483,7 @@ void bini_open (char *file)
 void *bini_read (size_t size)
 {
   void *data;
-  data = pool_alloc (ini_pool, size);
+  data = xmalloc (size);
 
   fread (data, size, 1, inifile);
   read_pos += size;
@@ -568,7 +503,7 @@ char *bini_str_tab (size_t offset)
 
   /* read in the entire string table */
   void *new_str_tab;
-  new_str_tab = pool_alloc (ini_pool, filesize - offset);
+  new_str_tab = xmalloc (filesize - offset);
   fseek (inifile, offset, SEEK_SET);
   fread (new_str_tab, filesize - offset, 1, inifile);
 
@@ -582,11 +517,36 @@ char *bini_str_tab (size_t offset)
 void bini_close ()
 {
   fclose (inifile);
-  if (!do_nothing)
+  if (!do_nothing && outfile != stdout)
     fclose (outfile);
-
-  /* destroy memory pool */
-  free_pool (ini_pool);
 }
 
-#endif
+FILE *get_stdin ()
+{
+  if (verbose)
+    fprintf (stderr, "Writing stdin to temporary file.\n");
+
+  FILE *out = tmpfile ();
+  if (out == NULL)
+    {
+      fprintf (stderr, "%s: failed to create temporary file\n", progname);
+      exit (EXIT_FAILURE);
+    }
+
+  uint8_t one_byte;
+  size_t size = 0;
+  while (!feof (stdin))
+    {
+      fread (&one_byte, 1, 1, stdin);
+      fwrite (&one_byte, 1, 1, out);
+      size++;
+    }
+
+  /* Initalize file data */
+  fseek (out, 0, SEEK_SET);
+  filesize = size;
+  read_pos = 0;
+  bini_eof = 0;
+
+  return out;
+}
