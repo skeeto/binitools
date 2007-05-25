@@ -1,3 +1,8 @@
+2007-05-25  Christopher Wellons  <ccw129@psu.edu>
+
+	* unbini.c: Fixed a bug where specifying both modes: do nothing
+	and summarize resulted in a crash.
+
 2007-05-18  Christopher Wellons  <ccw129@psu.edu>
 
 	* configure.ac: Removed unneeded libintl.h check from configure.

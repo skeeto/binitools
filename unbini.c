@@ -240,8 +240,8 @@ int unbini (char *inname, char *outname, int append)
 
   if (verbose)
     {
-      printf ("String table size: %d\n", filesize - str_offset);
-      printf ("String offset: %d\n", str_offset);
+      printf ("String table size: %d\n", (int) (filesize - str_offset));
+      printf ("String offset: %d\n", (int) str_offset);
     }
 
   /* print string table if requested */
@@ -342,8 +342,10 @@ int unbini (char *inname, char *outname, int append)
 	    }
 
 	  uint8_t val_count;
-	  char *str;		/* used to check string value */
 	  uint8_t val_type;
+	  char *str;		/* stored string value */
+	  int32_t int_val;	/* stores integer value */
+	  float float_val;	/* stores float value */
 	  for (val_count = 0; val_count < num_val; val_count++)
 	    {
 	      val_type = *((uint8_t *) bini_read (1));
@@ -355,13 +357,15 @@ int unbini (char *inname, char *outname, int append)
 		{
 		case 1:	/* integer */
 		  int_total++;
+		  int_val = *((int32_t *) bini_read (4));
 		  if (!do_nothing)
-		    fprintf (outfile, "%d", *((int32_t *) bini_read (4)));
+		    fprintf (outfile, "%d", (int) int_val);
 		  break;
 		case 2:	/* float */
 		  float_total++;
+		  float_val = *((float *) bini_read (4));
 		  if (!do_nothing)
-		    fprintf (outfile, "%f", *((float *) bini_read (4)));
+		    fprintf (outfile, "%f", float_val);
 		  break;
 		case 3:	/* string */
 		  string_total++;
