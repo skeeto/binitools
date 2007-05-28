@@ -127,8 +127,9 @@ int main (int argc, char **argv)
   int print_str_tab = 0;
   do_nothing = 0;
   char *arg_outfile = NULL;
-  int silent = 0;
-  int concat = 0;
+  int silent = 0;		/* supress output information */
+  int concat = 0;		/* concatenate input files */
+  int print_help = 0;		/* print help options */
 
   int c;			/* getopt() return value */
   while ((c = getopt (argc, argv, "o:stnvcqh")) != -1)
@@ -156,7 +157,7 @@ int main (int argc, char **argv)
 	silent = 1;
 	break;
       case 'h':		/* print help */
-	print_usage (EXIT_SUCCESS);
+	print_help = 1;
 	break;
       case '?':		/* bad argument */
 	print_usage (EXIT_FAILURE);
@@ -172,6 +173,10 @@ int main (int argc, char **argv)
       printf ("There is ABSOLUTELY NO WARRANTY; not even for ");
       printf ("MERCHANTIBILITY or\nFITNESS FOR A PARTICULAR PURPOSE.\n\n");
     }
+
+  /* print options and quit */
+  if (print_help)
+    print_usage (EXIT_SUCCESS);
 
   /* check for missing filenames */
   if (argc - optind < 1)

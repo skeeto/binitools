@@ -109,6 +109,7 @@ int main (int argc, char **argv)
 
   int concat = 0;		/* concatenate files */
   int silent = 0;		/* silent mode */
+  int print_help = 0; /* print help options */
 
   int c;			/* getopt() return value */
   while ((c = getopt (argc, argv, "o:tsnvcqh")) != -1)
@@ -136,7 +137,7 @@ int main (int argc, char **argv)
 	silent = 1;
 	break;
       case 'h':		/* print help */
-	print_usage (EXIT_SUCCESS);
+	print_help = 1;
 	break;
       case '?':		/* bad argument */
 	print_usage (EXIT_FAILURE);
@@ -152,6 +153,10 @@ int main (int argc, char **argv)
       printf ("There is ABSOLUTELY NO WARRANTY; not even for ");
       printf ("MERCHANTIBILITY or\nFITNESS FOR A PARTICULAR PURPOSE.\n\n");
     }
+
+  /* print options and quit */
+  if (print_help)
+    print_usage (EXIT_SUCCESS);
 
   if (verbose && do_nothing)
     printf ("Doing nothing.\n");

@@ -1,3 +1,8 @@
+2007-05-28  Christopher Wellons  <ccw129@psu.edu>
+
+	* unbini.c, parse.y: Copyright information is now printed when
+	options are requested with the -h option.
+
 2007-05-25  Christopher Wellons  <ccw129@psu.edu>
 
 	* unbini.c: Fixed a bug where specifying both modes: do nothing
