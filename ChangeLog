@@ -1,3 +1,11 @@
+2007-05-30  Christopher Wellons  <ccw129@psu.edu>
+
+	* unbini.c: Acutally uses stdout for output when specified now.
+
+	* unbini.c: Added standard INI mode to unbini output. This output
+	will behave better with other tools but cannot be repacked with
+	this bini tool.
+
 2007-05-28  Christopher Wellons  <ccw129@psu.edu>
 
 	* unbini.c, parse.y: Copyright information is now printed when

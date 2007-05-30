@@ -73,6 +73,7 @@ int verbose = 0;		/* program verbosity */
 int do_nothing = 0;		/* do not process file */
 int print_str_tab = 0;		/* print string table */
 int summarize = 0;		/* summarize file details */
+int ini_mode = 0;		/* Don't wrap strings in quotes */
 char *arg_outfile = NULL;	/* selected output file */
 
 /* handles special character expansion */
@@ -97,6 +98,7 @@ void print_usage (int ret)
   printf ("\t-s           Summarize file details\n");
   printf ("\t-n           Do not output a file\n");
   printf ("\t-v           Verbose mode\n");
+  printf ("\t-w           Standard INI output (no string quotes)\n");
   printf ("\t-c           Concatenate input files (requires -o option)\n");
   printf ("\t-q           Don't print message at startup\n");
   printf ("\t-h           Print this usage text\n");
@@ -109,10 +111,10 @@ int main (int argc, char **argv)
 
   int concat = 0;		/* concatenate files */
   int silent = 0;		/* silent mode */
-  int print_help = 0; /* print help options */
+  int print_help = 0;		/* print help options */
 
   int c;			/* getopt() return value */
-  while ((c = getopt (argc, argv, "o:tsnvcqh")) != -1)
+  while ((c = getopt (argc, argv, "o:tsnvwcqh")) != -1)
     switch (c)
       {
       case 't':		/* output string table */
@@ -129,6 +131,9 @@ int main (int argc, char **argv)
 	break;
       case 'v':		/* verbose mode */
 	verbose = 1;
+	break;
+      case 'w':		/* standard ini mode */
+	ini_mode = 1;
 	break;
       case 'c':		/* concatenate */
 	concat = 1;
@@ -199,6 +204,9 @@ int main (int argc, char **argv)
 	  /* Fetch file from stdin */
 	  cur_file = NULL;
 	  inifile = get_stdin ();
+
+	  if (verbose)
+	    fprintf (stderr, "Using standard input for input.\n");
 	}
       sum += unbini (cur_file, arg_outfile, concat * (i - optind));
 
@@ -271,7 +279,11 @@ int unbini (char *inname, char *outname, int append)
 
       if (outname != NULL)
 	{
-	  outfile = fopen (outname, method);
+	  if (strcmp (outname, "-") == 0)
+	    outfile = stdout;
+	  else
+	    outfile = fopen (outname, method);
+
 	  if ((int) outfile == -1)
 	    {
 	      fprintf (stderr, "%s: failed to open output file %s: %s\n",
@@ -322,7 +334,12 @@ int unbini (char *inname, char *outname, int append)
 	printf ("Section: %s -> %d entries\n", sec_str, num_entry);
 
       if (!do_nothing)
-	fprintf (outfile, "[\"%s\"]\n", sec_str);
+	{
+	  if (!ini_mode)
+	    fprintf (outfile, "[\"%s\"]\n", sec_str);
+	  else
+	    fprintf (outfile, "[%s]\n", sec_str);
+	}
 
       /* extract each section */
       uint16_t entry_count;
@@ -340,10 +357,15 @@ int unbini (char *inname, char *outname, int append)
 	  /* empty entry */
 	  if (!do_nothing)
 	    {
-	      if (num_val == 0)
-		fprintf (outfile, "\"%s\"\n", entry_str);
+	      if (!ini_mode)
+		fprintf (outfile, "\"%s\"", entry_str);
 	      else
-		fprintf (outfile, "\"%s\" = ", entry_str);
+		fprintf (outfile, "%s", entry_str);
+
+	      if (num_val == 0)
+		fprintf (outfile, "\n");
+	      else
+		fprintf (outfile, " = ");
 	    }
 
 	  uint8_t val_count;
@@ -377,7 +399,12 @@ int unbini (char *inname, char *outname, int append)
 		  str = *((uint32_t *) bini_read (4)) + str_tab;
 		  str = str_expand (str);
 		  if (!do_nothing)
-		    fprintf (outfile, "\"%s\"", str);
+		    {
+		      if (!ini_mode)
+			fprintf (outfile, "\"%s\"", str);
+		      else
+			fprintf (outfile, "%s", str);
+		    }
 		  break;
 		}
 
@@ -414,6 +441,11 @@ int unbini (char *inname, char *outname, int append)
 
 char *str_expand (char *str)
 {
+  /* If we are running standard INI mode, we don't do any
+     string expansions. */
+  if (ini_mode)
+    return str;
+
   char *p;			/* hold last point of replacement */
   char *eq;			/* current point of replacement */
   int char_count = 0;
