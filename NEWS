@@ -1,5 +1,12 @@
 Freelancer BINI tools
 
+1.0.2 (5-30-07)
+	* Besides some minor bug fixes, there has been a -w option
+	added to the unbini tool. This option will not quote the
+	strings making the output identical to other BINI tools. This
+	will enable the text versions to interact with other tools
+	properly.
+
 1.0.1 (5-19-07)
 
 	* There have been stdin and stdout options added to both

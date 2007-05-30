@@ -36,6 +36,14 @@ one another. Do not mix these tools with any other BINI tools as they
 will not work. These BINI tools are the only known tools that can
 convert back and forth from text format without error.
 
+In order to operate with other tools who want to read plain text
+files, unbini has a -w switch which will produce compatible
+output. This output will have the syntax that other tools are looking
+for. However, this file will not be readable by the BINI packing tool
+in this package. This is because this output file is ambiguous (it can
+represent many different possible BINI files). Don't edit files
+produced with the -w switch and expect to repack the file.
+
 TEXT FILES
 ----------
 
