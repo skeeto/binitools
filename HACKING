@@ -49,7 +49,7 @@ Normally, you can build everything with the normal configure, make:
 
 These BINI tools are meant to be used together, so be mindful of
 changes made to either tool that may make it incompatible with the
-other. To tests for compatibility problems, you can use the test tools
+other. To test for compatibility problems, you can use the test tools
 (described below).
 
 A final note: this code will only work on a computer architectures
@@ -221,13 +221,13 @@ the check target to test against the supplied BINI file.
 
   make check
 
-The supplied BINI file tests/simple.ini is a short BINI files that
+The supplied BINI file test/simple.ini is a short BINI files that
 contains many of the quirks of the Freelancer BINI files. You can list
-any other files you would like to be tested in the tests/
-directory. It is suggested that you copy all of the Freelancer BINI
-files here. Doing this will allow them all to be checked when running
-'make check'. When making a distribution (with 'make dist'), only
-simple.ini will be included.
+any other files you would like to be tested in the test/ directory. It
+is suggested that you copy all of the Freelancer BINI files
+here. Doing this will allow them all to be checked when running 'make
+check'. When making a distribution (with 'make dist'), only simple.ini
+will be included.
 
 The actual script that does the testing is a bash script -
 test.sh. This script follows these steps:
