@@ -1,6 +1,8 @@
 #                                               -*- Automake -*-
 # Process this file with automake.
 
+SUBDIRS = . doc
+
 # Distributions files
 bini_docs = BUGS HACKING
 bini_tests = test.sh checkbuild.sh tests/simple.ini
