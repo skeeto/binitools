@@ -1,0 +1,70 @@
+.TH unbini "1" "June 2007" "Christopher Wellons" "binitools"
+.SH NAME
+unbini - unpack a BINI file into a text file
+.SH SYNOPSIS
+unbini [options] [-o 
+.I output-file
+]
+.I file ...
+.SH DESCRIPTION
+.B unbini
+unpacks a "binary ini" (BINI) file into a text format that can easily
+be viewed and edited using any text editor. It is meant to be used
+with the
+.B bini
+tool, which can repack this text version into a BINI file.
+.PP
+In the text file, all strings are wrapped in quotes, including entry
+and section names. This is different from other BINI tools. Because of
+this, you should be careful when mixing these tools with other BINI
+tools.
+.PP
+For details on the format of the BINI file text files, see the 
+.B info
+documentation for the
+.B bini
+and 
+.B unbini
+tools.
+.SH OPTIONS
+.IP "-o file"
+Set the output file. When this option is not specified, the output
+file is the input file name with ".txt" concatenated.
+.IP -t
+Print the string table. This option will cause 
+.B unbini
+to print the string table of the BINI file. This can be useful with
+the -n option for simply viewing a BINI string table.
+.IP -s
+Summarize the BINI file details. Information about the BINI file is
+output, such as the number of sections, entries, and values. This is
+also useful with the -n option.
+.IP -n
+Do not output a file. No output file is created. The BINI file may not
+even be fully analyzed depending on other input options, such as -s
+and -t.
+.IP -v
+Verbose mode.
+.IP -w
+Use standard INI output. Strings will not be quoted in the
+output. This will make output more compatible with other BINI
+tools. The
+.B bini
+tools cannot repack this file, however.
+.IP -c
+Concatenate all input files into one output file (requires -o option).
+.IP -q
+Don't print message at start up.
+.IP -h
+Print usage information. (help)
+.SH BUGS
+The Windows builds of this software will sometimes flip floating point
+zeros signs from positive to negative. The underlying BINI file should
+not be effected. This may be a problem when trying to 
+.B diff
+unpacked BINI files.
+.SH AUTHOR
+Christopher Wellons <ccw129@psu.edu>
+.SH SEE ALSO
+.BR bini (1),
+.BR diff (1)
