@@ -5,7 +5,7 @@ SUBDIRS = . doc
 
 # Distributions files
 bini_docs = BUGS HACKING
-bini_tests = test.sh checkbuild.sh tests/simple.ini
+bini_tests = test.sh checkbuild.sh test/simple.ini
 EXTRA_DIST = $(bini_docs) $(bini_tests) parse.h
 
 bin_PROGRAMS = bini unbini
