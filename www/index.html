@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html
+          PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Freelancer BINI Tools</title>
+</head>
+<body>
+
+<h1>Freelancer BINI Tools</h1>
+
+<h2>Introduction</h2>
+<p>
+The Freelancer BINI tools are for unpacking and packing the Freelancer
+BINI files so that you may freely modify the game.
+</p>
+<p>
+These tools work reliably with all of the BINI files that come with
+Freelancer. Each release is tested against every Freelancer BINI file
+to be sure that there is no data loss or damage during conversion. The
+text version of the BINI files are also 100% as expressive as the
+original BINI files, with a one-to-one mapping between any possible
+BINI file and its text version. These are the only known tools capable
+of going back and forth between the binary and text versions.
+</p>
+<p>
+These tools also come with extra options for analyzing BINI files and
+debugging potential problems.
+</p>
+<p>
+Note: do not mix the use of these tools with any other BINI tools when
+dealing with text. The text version of these BINI files is a special
+format that other tools are not designed to handle. This is what
+allows these tools to properly handle all possible BINI files. If you
+need to read the text versions with other tools, use the -w switch on
+the unbini tool (more info below).
+</p>
+<p>
+For example, don't unpack a BINI file with another program and then
+attempt to repack them with these tools. You will have problems.
+</p>
+<p>
+Report bugs and problems to <a href="mailto:&#099;&#099;&#119;&#049;&#050;&#057;&#064;&#112;&#115;&#117;&#046;&#101;&#100;&#117;">&#099;&#099;&#119;&#049;&#050;&#057;&#064;&#112;&#115;&#117;&#046;&#101;&#100;&#117;</a>
+</p>
+
+<h2>Download</h2>
+<p>
+These tools are available as free software under the GNU GPL.
+</p>
+<h3>1.0.2 Release (5-30-07)</h3>
+<p>
+This release adds a -w switch to the unbini tool. The output when
+using this switch is compatible with other BINI tools that need to
+look at text versions of these files. However, when using the -w
+switch, the bini tool will not be able to read the file. This release
+also contains a few bug fixes.
+</p>
+<ul>
+<li>Source: 
+    <a href="binitools-1.0.2.tar.gz">binitools-1.0.2.tar.gz (128.7KB)</a></li>
+<li>Windows build: 
+    <a href="binitools-1.0.2-bin.zip">binitools-1.0.2-bin.zip (29.3KB)</a></li>
+</ul>
+<h3>Old Releases</h3>
+<h4>1.0.1 Release (5-19-07)</h4>
+<p>
+Release 1.0.1 is mostly changes to the code base and the build system
+(the GNU build system). The only change for users is the addition of
+stdin and stdout options to both tools. See README for details.
+</p>
+<ul>
+<li>Source: 
+    <a href="binitools-1.0.1.tar.gz">binitools-1.0.1.tar.gz (127.6KB)</a></li>
+<li>Windows build: 
+    <a href="binitools-1.0.1-bin.zip">binitools-1.0.1-bin.zip (28.6KB)</a></li>
+</ul>
+<h4>1.0 Release (5-15-07)</h4>
+<p>
+This is the 1.0 release of the BINI tools:
+</p>
+<ul>
+<li>Source: 
+    <a href="binitools-1.0.tar.gz">binitools-1.0.tar.gz (22.3KB)</a></li>
+<li>Windows build: 
+    <a href="binitools-1.0-bin.zip">binitools-1.0-bin.zip (51.6KB)</a></li>
+</ul>
+<h3>Subversion Repository</h3>
+<p>
+You can also download the latest bleeding edge version of the tools
+right from the <a href="http://subversion.tigris.org/">Subversion</a>
+repository with this command:
+</p>
+<pre>
+svn co https://opensvn.csie.org/bini/trunk binitools
+</pre>
+<p>
+Once you have the sources from the repository, you can set up the
+build environment with autoreconf (with the -i install flag):
+</p>
+<pre>
+autoreconf -i
+</pre>
+<p>
+The file <code>HACKING</code> describes what tools you will need to
+build the sources. To build the sources on Windows, you will need <a
+href="http://www.cygwin.com/">Cygwin</a>.
+</p>
+
+<h2>Usage</h2>
+<p>
+These are the <code>bini</code> compressor options:
+</p>
+<pre>
+Usage: bini [options] FILES
+
+Options:
+
+        -o file      Set output file
+        -s           Summarize file details
+        -t           Print string table
+        -n           Do not output a file
+        -v           Verbose mode
+        -c           Concatenate input files
+        -q           Don't print message at startup
+        -h           Print this usage text
+</pre>
+<p>
+These are the <code>unbini</code> uncompressor options:
+</p>
+<pre>
+Usage: unbini [options] FILES
+
+Options:
+
+        -o file      Set output file
+        -t           Print string table
+        -s           Summarize file details
+        -n           Do not output a file
+        -v           Verbose mode
+        -w           Standard INI output (no string quotes)
+        -c           Concatenate input files (requires -o option)
+        -q           Don't print message at startup
+        -h           Print this usage text
+</pre>
+
+<h2>Motivation</h2>
+<p>
+There are three reasons that these tools were written:
+</p>
+<ul>
+<li>
+<strong>The existing text BINI tools were poor quality.</strong> - All
+of the other known BINI text tools are unable to reliably handle all
+BINI files.
+</li>
+<li>
+<strong>There were no free (as in speech) tools.</strong> All of the
+other tools were not available under free licenses, nor was source
+code available. These tools below are free software.
+</li>
+<li>
+<strong>This is an interesting problem to solve.</strong> These tools
+are enjoyable to write. Plus I always wanted to use <code>yacc</code>
+on a real project.
+</li>
+</ul>
+
+
+<!-- W3 validation -->
+  <p>
+    <a href="http://validator.w3.org/check?uri=referer"><img
+        src="http://www.w3.org/Icons/valid-xhtml10"
+        alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+  </p>
+
+</body>
+</html>
