@@ -31,9 +31,61 @@ Software Foundation raise funds for GNU development.''
 @title The binitools and BINI Format Guide
 @subtitle for binitools version @value{VERSION}, @value{UPDATED}
 @author Christopher Wellons (@email{ccw129@@psu.edu})
+
 @page
 @vskip 0pt plus 1filll
 @insertcopying
+
 @end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top binitools
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Preface::          An introduction
+* Using unbini::     Unpacking BINI files.
+* Using bini::       Repcking BINI files.
+* Tips and Tricks::  Useful binitools tricks.
+* The BINI Format::  Detailed information on the BINI format.
+* Index::            Complete index.
+@end menu
+
+@c Preface
+@node Preface
+@chapter Preface
+@cindex preface
+
+@c The unbini usage chapter.
+@node Using unbini
+@chapter Using unbini
+@cindex unbini
+
+@c The bini usage chapter.
+@node Using bini
+@chapter Using bini
+@cindex bini
+
+@c Tips and Tricks
+@node Tips and Tricks
+@chapter Tips and Tricks
+@cindex tricks
+@cindex tips
+
+@c The BINI Format
+@node The BINI Format
+@chapter The BINI Format
+@cindex format
+
+@c End the manual with the index.
+@node Index
+@unnumbered Index
+
+@printindex cp   
 
 @bye
