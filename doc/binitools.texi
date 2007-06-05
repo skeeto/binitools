@@ -74,14 +74,14 @@ convert back and forth from text format without error.
 @cindex unbini
 
 @menu
-* Basic Operation::   Basic usage of unbini.
-* Output Format::     The unbini output format.
-* Special Output::    Producing compatible output.
-* BINI Analysis::     Options for inspecting BINI files.
-* Quick Help::        Extra help information.
+* unbini Basic Operation:: Basic usage of unbini.
+* Output Format::          The unbini output format.
+* Special Output::         Producing compatible output.
+* unbini BINI Analysis::   Options for inspecting BINI files.
+* unbini Quick Help::      Extra help information.
 @end menu
 
-@node Basic Operation
+@node unbini Basic Operation
 @section Basic Operation
 
 @cindex unpack
@@ -100,7 +100,6 @@ behavior changes with the @option{-c} flag. All input files are
 concatenated into a single output file, which must be specified with
 the @option{-o} option.
 
-@cindex drop, and drag
 @cindex drag and drop
 @cindex Windows
 If you are on the Windows platform, you can easily convert many files
@@ -214,8 +213,8 @@ possible, different BINI files). @emph{Do not} edit files produced
 with the @option{-w} option and expect to repack the file with these
 tools.
 
-@node BINI Analysis
-@section BINI Analysis
+@node unbini BINI Analysis
+@section unbini BINI Analysis
 @cindex analysis
 
 There are two options for analysing a BINI file using
@@ -271,16 +270,16 @@ entry
 -----------------
 @end example
 
-@node Quick Help
-@section Quick Help
+@node unbini Quick Help
+@section unbini Quick Help
 
 @cindex help
 @cindex extra documentation
 To view all of the options presented here, you can use the @option{-h}
-option. It produces the following output:
+option,
 
 @example
-Usage: ../unbini [options] FILES
+Usage: unbini [options] FILES
 
 Options:
 
@@ -303,18 +302,112 @@ than the @option{-h} option produces.
 @chapter Using bini
 @cindex bini
 
-When repacking the files with bini (bini.exe), the .txt extention is
-removed. If an original file already exists, it is backed up (see
-BACKUP below). If no .txt extension is on the file, .ini is added
-instead.
+@menu
+* bini Basic Operation::  Basic usage of bini.
+* bini BINI Analysis::    Options for inspecting BINI files.
+* bini Quick Help::       Extra help information.
+@end menu
 
+@node bini Basic Operation
+@section bini Basic Operation
 
-When bini converts a text file back into a BINI file, it will check to
-see if the BINI file already exists. If so, it will back it up (adding
-a .bak extension), with one exception. If the backup already exists,
-no backup is made. This way, the tools will automatically back up your
-original Freelancer files and never overwrite those backups. You can
-restore the original file at anytime by removing the .bak extension.
+@cindex pack
+@command{bini} @dfn{packs} a text file produced by @command{unbini}
+into a binary BINI file. @command{bini} works very similarly to
+@command{unbini} in that it accepts any number of input files and
+produces a unique output file for each.
+
+@cindex filename
+@cindex backup
+When packing files with @command{bini}, the @file{.txt} extention is
+removed. If there is no @file{.txt} extension, @file{.ini} is
+concatentaed instead. If a file with a matching filename already
+exists, that file is backed up by appending @file{.bak} to the
+original file's name. If a backup already exists no backup is made.
+
+This backup system allows you to edit an original BINI file without
+ever having to worry about makeing an original backup. The original is
+backed up and no further backups are made.
+
+@node bini BINI Analysis
+@section bini BINI Analysis
+@cindex analysis
+
+There are two options for analysing a BINI file using
+@command{bini}. The first is the summary option, @option{-s}. After
+all processing is complete, a summary of the number of sections,
+entries, and values.
+
+Here is the summary of @file{simple.ini}, which is included in the
+source distribution.
+@example
+Sections : 4
+Entries  : 13
+Values   : 20
+  int    : 6
+  float  : 2
+  string : 12
+@end example
+
+The second option is a listing of the string table, @option{-t}. The
+elements are printed at one per line in the same order they are stored
+in the BINI file.
+
+Here is the string table for @file{simple.ini},
+@example
+Sec tion
+numbers
+Spaced Entry
+space->    <-space
+more->   <-space
+break
+==================
+empty
+
+Abc
+[hard=section]
+expression
+0* + 1
+:
+colon_entry
+121234
+number_entry
+equals_val
+= assignment
+filename
+C:\freelancer\freelancer.exe
+backslash
+This is a backslash: \
+empty section
+lastsection
+empty entry
+entry
+-value
+-----------------
+@end example
+
+@node bini Quick Help
+@section bini Quick Help
+
+The @option{-h} flag will give basic usage information,
+
+@example
+Usage: bini [options] FILES
+
+Options:
+
+        -o file      Set output file
+        -s           Summarize file details
+        -t           Print string table
+        -n           Do not output a file
+        -v           Verbose mode
+        -c           Concatenate input files
+        -q           Don't print message at startup
+        -h           Print this usage text
+@end example
+
+The @command{man} page contains slightly more detailed information
+than the @option{-h} option produces.
 
 @c Tips and Tricks
 @node Tips and Tricks
