@@ -75,6 +75,9 @@ convert back and forth from text format without error.
 
 @menu
 * Basic Operation::   Basic usage of unbini.
+* Output Format::     The unbini output format.
+* Special Output::    Producing compatible output.
+* BINI Analysis::     Options for inspecting BINI files.
 * Quick Help::        Extra help information.
 @end menu
 
@@ -91,8 +94,8 @@ read by a computer. To edit a BINI file, it must first be
 
 @cindex concatenate
 @cindex arguments
-@command{unbini} accept any number of files as arguments. Each file is
-processed separately and converted into its own output file. This
+@command{unbini} accepts any number of files as arguments. Each file
+is processed separately and converted into its own output file. This
 behavior changes with the @option{-c} flag. All input files are
 concatenated into a single output file, which must be specified with
 the @option{-o} option.
@@ -129,21 +132,10 @@ is supplied as an input file and no output file is specified (with the
 @option{-o} option), or of @file{-} is specified as the output file,
 ubini will use standard output @file{stdout} for producing output.
 
-In order to operate with other tools who want to read plain text
-files, unbini has a -w switch which will produce compatible
-output. This output will have the syntax that other tools are looking
-for. However, this file will not be readable by the BINI packing tool
-in this package. This is because this output file is ambiguous (it can
-represent many different possible BINI files). Don't edit files
-produced with the -w switch and expect to repack the file.
+@node Output Format
+@section Output Format
 
-All of the *.ini files in the Freelancer directory tree are binary
-encoded files (dubbed BINI for binary ini?) that are not easily
-editable by hand. These two tools allow a user to convert this BINI
-files into an easily editable text file using "unbini". Once editing
-is complete, the text file is converted back into a BINI file.
-
-The text version looks like this:
+The text output from @command{unbini} version looks like this,
 
 @example
 ["Section Title"]
@@ -154,35 +146,49 @@ The text version looks like this:
 ["An Empty Section"]
 @end example
 
-All non-quoted whitespace is ignored, so you can freely add space and
-empty lines and such as much as you want.
+@cindex quotes
+@cindex quoted values
+@cindex backslash
+@cindex escaped characters
+Every string value, including section and entry names, must be
+contained in quotes. Quotes and backslashes inside the quotes must be
+escaped with a backslash.
 
-There are two types of numbers: integers and floating points. Integers
-are signed and have no decimal component. Floating points are any
-signed number with a decimal. It is strongly advised that, when
-editing Freelancer files, you keep floats as floats (by leaving the
-decimal point in the number) and integers are integers (by having no
-decimal point).
-
-Every string value, including section and entry names, must be wrapped
-in a quote pair. Quotes and backslashes inside the quotes must be
-escaped with a backslash:
-
+@example
 "A \"quoted\" word and a backslash: \\."
+@end example
 
-will be interpreted as:
+will be interpreted as,
 
+@example
 A "quoted" word and a backslash \.
+@end example
 
-All other characters are legal inside the quotes.
+All other characters, including a new line character, are legal inside
+the quotes.
 
 Why all these quotes? This gaurantees that the BINI file and the text
 file are equally expressive and that there is a one-to-one mapping of
-each BINI file to each text version.
+any possible BINI file to a unique text version.
 
+@cindex whitespace
+All non-quoted whitespace is ignored, so you can freely add space and
+empty lines and such as much as you want. This makes the text version
+of a BINI file very flexible.
+
+@cindex number
+@cindex integer
+@cindex float
+@cindex double
+@cindex value
+There are two types of numbers: integers and floating points. Integers
+are signed and have no decimal component. Floating points are any
+signed number with a decimal. 
+
+@cindex comments
 You can also comment your text file with a # character. Comments are
 not encoded into the BINI file in any way. This means unpacking your
-own BINI files will not recover your comments.
+own BINI files will not recover any comments.
 
 For example,
 
@@ -195,12 +201,75 @@ For example,
 "entry2" = "some value" 
 @end example
 
-When bini converts a text file back into a BINI file, it will check to
-see if the BINI file already exists. If so, it will back it up (adding
-a .bak extension), with one exception. If the backup already exists,
-no backup is made. This way, the tools will automatically back up your
-original Freelancer files and never overwrite those backups. You can
-restore the original file at anytime by removing the .bak extension.
+@node Special Output
+@section Special Output
+
+@cindex compatibility
+In order to operate with other tools who want to read plain text
+files, unbini has a @option{-w} option which will produce output that
+other programs will recognize. However, this file will not be readable
+by @command{bini}, which repacks the text file into the BINI format.
+This is because this output file is ambiguous (it can represent many
+possible, different BINI files). @emph{Do not} edit files produced
+with the @option{-w} option and expect to repack the file with these
+tools.
+
+@node BINI Analysis
+@section BINI Analysis
+@cindex analysis
+
+There are two options for analysing a BINI file using
+@command{unbini}. The first is the summary option, @option{-s}. After
+all processing is complete, a summary of the number of sections,
+entries, and values.
+
+Here is the summary of @file{simple.ini}, which is included in the
+source distribution.
+@example
+Sections : 4
+Entries  : 13
+Values   : 20
+  int    : 6
+  float  : 2
+  string : 12
+@end example
+
+The second option is a listing of the string table, @option{-t}. The
+elements are printed at one per line in the same order they are stored
+in the BINI file.
+
+Here is the string table for @file{simple.ini},
+@example
+Sec tion
+numbers
+Spaced Entry
+space->    <-space
+more->   <-space
+break
+==================
+empty
+
+Abc
+[hard=section]
+expression
+0* + 1
+:
+colon_entry
+121234
+number_entry
+equals_val
+= assignment
+filename
+C:\freelancer\freelancer.exe
+backslash
+This is a backslash: \
+empty section
+lastsection
+empty entry
+entry
+-value
+-----------------
+@end example
 
 @node Quick Help
 @section Quick Help
@@ -238,6 +307,14 @@ When repacking the files with bini (bini.exe), the .txt extention is
 removed. If an original file already exists, it is backed up (see
 BACKUP below). If no .txt extension is on the file, .ini is added
 instead.
+
+
+When bini converts a text file back into a BINI file, it will check to
+see if the BINI file already exists. If so, it will back it up (adding
+a .bak extension), with one exception. If the backup already exists,
+no backup is made. This way, the tools will automatically back up your
+original Freelancer files and never overwrite those backups. You can
+restore the original file at anytime by removing the .bak extension.
 
 @c Tips and Tricks
 @node Tips and Tricks
