@@ -61,12 +61,33 @@ Software Foundation raise funds for GNU development.''
 @chapter Preface
 @cindex preface
 
-Both tools have been tested with every BINI file that comes with
-Freelancer and are able to freely convert back and forth with no data
-loss or damage. These tools are meant to be used in conjunction with
-one another. Do not mix these tools with any other BINI tools as they
-will not work. These BINI tools are the only known tools that can
-convert back and forth from text format without error.
+@cindex free software
+Before these binitools were created, several programs already existed
+for editing and manipulating BINI files. However, none of these tools
+are @url{http://www.fsf.org/licensing/essays/free-sw.html , , free
+software}. Additionally, none of the tools that would convert between
+BINI and text could do so reliably and correctly.
+
+The purpose of the binitools project is to create free software tools
+that are capable of converting any possible BINI to text and back with
+complete accuracy. Every release is tested against 1233 different BINI
+files for correctness.
+
+Note that these tools are meant to be used in conjunction with one
+another. Do not mix these tools with any other text to BINI
+converters. These BINI tools are the only known tools that can convert
+back and forth from text format without error.
+
+What makes these tools different is the use of quotes. All string
+values, including entry and section names, are wrapped in quotes. This
+makes the text version of a BINI file equally as expressive as a BINI
+file. A BINI file represents unique text file and vice versa.
+
+The @command{bini} tool for converting a text file into a BINI file
+works on the same conventions as a compiler. It uses a scanner and
+parser and even has its own grammar. This allows the text files to be
+flexible and have accurate error reporting when there is a formatting
+mistake.
 
 @c The unbini usage chapter.
 @node Using unbini
