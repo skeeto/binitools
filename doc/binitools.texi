@@ -30,8 +30,8 @@ Software Foundation raise funds for GNU development.''
 @titlepage
 @title The binitools and BINI Format Guide
 @subtitle for binitools version @value{VERSION}, @value{UPDATED}
-@author Christopher Wellons (@email{ccw129@@psu.edu})
 
+@author Christopher Wellons (@email{ccw129@@psu.edu})
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -51,7 +51,6 @@ Software Foundation raise funds for GNU development.''
 * Preface::          An introduction
 * Using unbini::     Unpacking BINI files.
 * Using bini::       Repcking BINI files.
-* Tips and Tricks::  Useful binitools tricks.
 * The BINI Format::  Detailed information on the BINI format.
 * Index::            Complete index.
 @end menu
@@ -108,8 +107,8 @@ mistake.
 @cindex unpack
 @cindex text editor
 @cindex editor, text
-The BINI file format stores data in a format that can more easily be
-read by a computer. To edit a BINI file, it must first be
+The BINI file format stores data in a format that can more easily and
+quickly be read by a computer. To edit a BINI file, it must first be
 @dfn{unpacked} into a text file to be edited by a text editor. The
 @command{unbini} tool can unpack the BINI file for this purpose.
 
@@ -124,9 +123,9 @@ the @option{-o} option.
 @cindex drag and drop
 @cindex Windows
 If you are on the Windows platform, you can easily convert many files
-with drag-and-drop.  by selecting all the files you want to
-convert. You can achieve this effect in Windows by dragging and
-dropping any files you want converted onto the executable files.
+with drag-and-drop. You can achieve this effect in Windows by dragging
+and dropping any files you want converted onto the executable
+binitools files, @file{bini.exe} and @file{unbini}.
 
 @cindex output
 The output file is determined by appending @file{.txt} to the input
@@ -172,7 +171,8 @@ The text output from @command{unbini} version looks like this,
 @cindex escaped characters
 Every string value, including section and entry names, must be
 contained in quotes. Quotes and backslashes inside the quotes must be
-escaped with a backslash.
+escaped with a backslash. This can be seen above with the double
+backslash in the filename.
 
 @example
 "A \"quoted\" word and a backslash: \\."
@@ -194,7 +194,9 @@ any possible BINI file to a unique text version.
 @cindex whitespace
 All non-quoted whitespace is ignored, so you can freely add space and
 empty lines and such as much as you want. This makes the text version
-of a BINI file very flexible.
+of a BINI file very flexible. You can line up values and entries to
+increase readability. Think of the text files as the true source for
+your BINI files.
 
 @cindex number
 @cindex integer
@@ -241,7 +243,9 @@ tools.
 There are two options for analysing a BINI file using
 @command{unbini}. The first is the summary option, @option{-s}. After
 all processing is complete, a summary of the number of sections,
-entries, and values.
+entries, and values. This can be used for error checking, and is
+actually used as part of the test suite for @command{binitools} to
+confirm that the tools are working properly.
 
 Here is the summary of @file{simple.ini}, which is included in the
 source distribution.
@@ -256,7 +260,7 @@ Values   : 20
 
 The second option is a listing of the string table, @option{-t}. The
 elements are printed at one per line in the same order they are stored
-in the BINI file.
+in the BINI file. This can also be used for error checking.
 
 Here is the string table for @file{simple.ini},
 @example
@@ -316,7 +320,7 @@ Options:
 @end example
 
 The @command{man} page contains slightly more detailed information
-than the @option{-h} option produces.
+than the @option{-h} option produces, if you need a quick reference.
 
 @c The bini usage chapter.
 @node Using bini
@@ -357,7 +361,9 @@ backed up and no further backups are made.
 There are two options for analysing a BINI file using
 @command{bini}. The first is the summary option, @option{-s}. After
 all processing is complete, a summary of the number of sections,
-entries, and values.
+entries, and values. This works identically to the @option{-s} option
+in @command{unbini}, which can help in error checking between the
+different file types.
 
 Here is the summary of @file{simple.ini}, which is included in the
 source distribution.
@@ -372,7 +378,7 @@ Values   : 20
 
 The second option is a listing of the string table, @option{-t}. The
 elements are printed at one per line in the same order they are stored
-in the BINI file.
+in the BINI file. This is also identical to @command{unbini}.
 
 Here is the string table for @file{simple.ini},
 @example
@@ -430,16 +436,14 @@ Options:
 The @command{man} page contains slightly more detailed information
 than the @option{-h} option produces.
 
-@c Tips and Tricks
-@node Tips and Tricks
-@chapter Tips and Tricks
-@cindex tricks
-@cindex tips
-
 @c The BINI Format
 @node The BINI Format
 @chapter The BINI Format
 @cindex format
+
+This segment is not terribly important to read if you are just looking
+to use the @command{binitools}. However, if you want to better
+understand the BINI format, this chapter is for you.
 
 A BINI file has two segments: a @dfn{data segment} and a @dfn{string
 segment}, which contains the string table.
