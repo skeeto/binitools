@@ -1,55 +1,218 @@
-2007-05-30  Christopher Wellons  <ccw129@psu.edu>
+2007-07-06 00:18  wellons
 
-	* unbini.c: Acutally uses stdout for output when specified now.
+	* COPYING: Updated license to GPLv3.
 
-	* unbini.c: Added standard INI mode to unbini output. This output
-	will behave better with other tools but cannot be repacked with
-	this bini tool.
+2007-07-06 00:15  wellons
 
-2007-05-28  Christopher Wellons  <ccw129@psu.edu>
+	* doc/binitools.texi: Added details on the BINI format.
 
-	* unbini.c, parse.y: Copyright information is now printed when
-	options are requested with the -h option.
+2007-06-09 21:50  wellons
 
-2007-05-25  Christopher Wellons  <ccw129@psu.edu>
+	* doc/binitools.texi: Added the preface.
 
-	* unbini.c: Fixed a bug where specifying both modes: do nothing
-	and summarize resulted in a crash.
+2007-06-05 22:39  wellons
 
-2007-05-18  Christopher Wellons  <ccw129@psu.edu>
+	* doc/binitools.texi: Wrote most of the bini chapter in the texinfo
+	  documentation.
 
-	* configure.ac: Removed unneeded libintl.h check from configure.
+2007-06-05 03:09  wellons
 
-	* unbini.c: Removed mmap() implementation. All input is now
-	regular file input and output. This should greatly simplify
-	unbini.c code.
+	* doc/binitools.texi: The unbini section of the texinfo
+	  documentation is nearly complete.
 
-	* unbini.c: Added stdin and stdout to unbini.
+2007-06-05 00:03  wellons
 
-	* parse.y, convert.c: Added stdin and stdout options to bini.
+	* doc/binitools.texi: Began writing the actual documentation.
 
-	* Makefile.am: Added parse.g to EXTRA_DIST. The test suite is now
-	fully working with 'make distcheck'.
+2007-06-04 01:49  wellons
 
-2007-05-17  Christopher Wellons  <ccw129@psu.edu>
+	* doc/binitools.texi: Began texinfo structure.
 
-	* Makefile.am: Added test suite.
+2007-06-03 20:10  wellons
 
-	* all: switched to types with explicit widths (uint32_t etc)
+	* HACKING: Updated some documenation on the tests/ move.
 
-2007-05-16  Christopher Wellons  <ccw129@psu.edu>
+2007-06-03 20:08  wellons
 
-	* all: converted project to the GNU build system (autoconf,
-	automake, autoheader, etc)
+	* Makefile.am, checkbuild.sh, test, tests: Changed tests/ to test/
+	  which is more standard.
 
-	* parse.y: yyerror() now describes the current filename when
-	reporting errors
+2007-06-03 19:03  wellons
 
-	* scan.l: moved comment priority down in the scanner
+	* www/index.html: Adjusted website wording.
 
-	* NEWS, ChangeLog, BUGS, AUTHORS, COPYING, COPYRIGHT: I
-	initilalized all of these files.
+2007-06-03 19:00  wellons
 
-	* README, HACKING: I wrote up all of the documentation into these
-	two files.
+	* www/binitools-1.0-bin.zip, www/binitools-1.0.1-bin.zip,
+	  www/binitools-1.0.1.tar.gz, www/binitools-1.0.2-bin.zip,
+	  www/binitools-1.0.2.tar.gz, www/binitools-1.0.tar.gz, www/files,
+	  www/files/binitools-1.0-bin.zip,
+	  www/files/binitools-1.0.1-bin.zip,
+	  www/files/binitools-1.0.1.tar.gz,
+	  www/files/binitools-1.0.2-bin.zip,
+	  www/files/binitools-1.0.2.tar.gz, www/files/binitools-1.0.tar.gz,
+	  www/index.html: Moved downloadable files into their own
+	  directory.
+
+2007-06-03 18:35  wellons
+
+	* www/binitools-1.0-bin.zip, www/binitools-1.0.1-bin.zip,
+	  www/binitools-1.0.1.tar.gz, www/binitools-1.0.2-bin.zip,
+	  www/binitools-1.0.2.tar.gz, www/binitools-1.0.tar.gz,
+	  www/index.html: Added website files.
+
+2007-06-03 18:26  wellons
+
+	* www: Began adding the website to subversion.
+
+2007-06-03 18:24  wellons
+
+	* Makefile.am, configure.ac, doc/Makefile.am, doc/bini.1,
+	  doc/binitools.texi: Hooked documentation into the build system. A
+	  texinfo document was
+	  begun as well.
+
+2007-06-03 06:21  wellons
+
+	* doc, doc/bini.1, doc/unbini.1: Began adding man pages and other
+	  documentation.
+
+2007-05-31 02:55  wellons
+
+	* configure.ac: Ticked up version number.
+
+2007-05-30 21:04  wellons
+
+	* NEWS, README, configure.ac: Updated documentation and ticked up
+	  version number to reflect new release.
+
+2007-05-30 20:36  wellons
+
+	* ChangeLog, unbini.c: Added -w option to unbini.
+
+2007-05-28 04:09  wellons
+
+	* ChangeLog, parse.y, unbini.c: Copyright information is now
+	  printed when options are requested with
+	  the -h option.
+
+2007-05-25 23:12  wellons
+
+	* ChangeLog, unbini.c: Fixed a bug where specifying both modes: do
+	  nothing and summarize
+	  resulted in a crash. For example: unbini -ns simple.ini
+
+2007-05-19 04:40  wellons
+
+	* configure.ac: Ticking up version number due to previous tagging.
+
+2007-05-19 03:56  wellons
+
+	* NEWS: More updats to NEWS for next release.
+
+2007-05-19 03:52  wellons
+
+	* NEWS: Updated NEWS for next release.
+
+2007-05-19 03:44  wellons
+
+	* COPYRIGHT, HACKING, configure.ac: Touching up documenation for
+	  next release.
+
+2007-05-19 03:29  wellons
+
+	* BUGS: Added known Windows bug to BUGS.
+
+2007-05-19 03:18  wellons
+
+	* ChangeLog, configure.ac: Removed unneeded check from configure.
+
+2007-05-19 03:13  wellons
+
+	* ChangeLog, README, TODO, configure.ac, unbini.c: Added
+	  stdin/stdout options to unbini. Removed mmap() from unbini.
+
+2007-05-19 02:13  wellons
+
+	* ChangeLog, README, TODO, convert.c, parse.y: Added stdin and
+	  stdout options to bini.
+
+2007-05-18 23:05  wellons
+
+	* HACKING: Updated mingw32 information
+
+2007-05-18 04:57  wellons
+
+	* HACKING, configure.ac: Added a check for big-endian systems. Also
+	  updated development
+	  information in HACKING.
+
+2007-05-18 04:32  wellons
+
+	* HACKING: Updated development documentation for the test suite.
+
+2007-05-18 04:20  wellons
+
+	* ChangeLog, Makefile.am, checkbuild.sh, configure.ac: Adjusted
+	  conf files to work with 'make distcheck'. Yacc file parse.h
+	  is now included properly in the distribution.
+
+2007-05-18 02:51  wellons
+
+	* test.sh: Adjusted small problem with the test suite
+
+2007-05-18 02:34  wellons
+
+	* ChangeLog, Makefile.am, TODO, benchtest.ini.txt, checkbuild.sh,
+	  test.sh, tests, tests/simple.ini: Added test suite to the
+	  project.
+
+2007-05-18 01:48  wellons
+
+	* configure.ac: adjusted automake settings
+
+2007-05-17 23:45  wellons
+
+	* HACKING, TODO, configure.ac: updated some documentation
+
+2007-05-17 21:36  wellons
+
+	* ChangeLog, configure.ac, convert.c, convert.h, parse.y, scan.l,
+	  unbini.c: Switched to u?int* types
+
+2007-05-17 03:14  wellons
+
+	* HACKING, TODO: updated HACKING and TODO for autoconf
+
+2007-05-17 02:33  wellons
+
+	* ChangeLog, Makefile, Makefile.am, VERSION, configure.ac,
+	  convert.c, convert.h, parse.y, pool.c, pool.h, scan.l, unbini.c:
+	  converted project to GNU build system
+
+2007-05-16 17:18  wellons
+
+	* Makefile: documented Makefile
+
+2007-05-16 17:13  wellons
+
+	* Makefile, README: added some notes to the README
+
+2007-05-16 16:23  wellons
+
+	* HACKING, Makefile, VERSION: added distribution code
+
+2007-05-16 16:12  wellons
+
+	* HACKING, README: added info to documentation
+
+2007-05-16 07:22  wellons
+
+	* AUTHORS, BUGS, COMMITTERS, COPYING, COPYRIGHT, ChangeLog,
+	  HACKING, Makefile, NEWS, README, TODO, benchtest.ini.txt,
+	  convert.c, convert.h, parse.y, pool.c, pool.h, scan.l, test.sh,
+	  ., AUTHORS, BUGS, COMMITTERS, COPYING, COPYRIGHT, ChangeLog,
+	  HACKING, Makefile, NEWS, README, TODO, benchtest.ini.txt,
+	  convert.c, convert.h, parse.y, pool.c, pool.h, scan.l, test.sh,
+	  unbini.c, unbini.c: moved all files to trunk
 
