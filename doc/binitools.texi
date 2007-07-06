@@ -441,6 +441,114 @@ than the @option{-h} option produces.
 @chapter The BINI Format
 @cindex format
 
+A BINI file has two segments: a @dfn{data segment} and a @dfn{string
+segment}, which contains the string table.
+
+@verbatim
++------------+
+|            |
+|            |
+|    data    |
+|            |
+|            |
+|            |
+|            |
+|            |
+|            |
+|------------|
+|            |
+|            |
+|   string   |
+|    table   |
+|            |
+|            |
+|            |
++------------+
+@end verbatim
+
+The @dfn{string table} is an @code{argz} vector: a contiguous block of
+memory with strings separated by null-characters (/0). The data
+section points to these strings. All values are stored as little
+endian.
+
+A BINI file begins with a 12-byte header made up of 3 4-byte segments,
+
+@verbatim
+header {
+  dword "BINI"
+  dword version
+  dword str_table
+}
+@end verbatim
+
+The first 4 bytes identify the file as a BINI file with those exact 4
+ASCII letters. The second 4 bytes are always equal to the number
+1. This is believed to be a version number. The last 4 bytes is the
+string table offset from the beginning of the file.
+
+The first 4 bytes after the header is the first section. A section
+contains two 2-byte values,
+
+@verbatim
+section {
+  word string_offset
+  word number_of_entries
+}
+@end verbatim
+
+The string offset is the offset from the beginning of the string
+table. This string is the name of that section. The second word is the
+number of entries in this section. Note that the number of sections is
+not listed anywhere, so this information can only be found by
+iterating though the entire data segment.
+
+Following this section information is a 3-byte entry,
+
+@verbatim
+entry {
+  word string_offset
+  byte number of values
+}
+@end verbatim
+
+This is data is setup just like sections with the string offset being
+the name of the entry, and following it is the same number of values
+as indicated,
+
+@verbatim
+value {
+  byte  type
+  dword data
+}
+@end verbatim
+
+A value is 5 bytes. The first byte describes the type, of which there
+are three,
+
+@example
+1 - integer
+2 - float
+3 - a string table offset
+@end example
+
+The data dword is of the indicated type. The next entry after all of
+the values for this entry, the next entry (if there is one). After the
+last entry, we may either find ourselves at the string table, meaning
+that the parsing is complete, or we are at another new section, and we
+start over again.
+
+The code in unbini.c should be fairly straight forward following these
+instructions.
+
+The memory pool allows unbini to free all memory between parsing each
+file. A memory pool works by allocating a large chunk of memory ahead
+of time and handing off bits of it as needed. Its function is twofold:
+we can easily free all the memory we have used by freeing the pool
+itself. Second, its faster than calling malloc() many times because
+malloc() is a system call. This is important in bini because it is
+building a parse tree and needs to allocate small chunks of memory
+from the heap very quickly.
+
 @c End the manual with the index.
 @node Index
 @unnumbered Index
