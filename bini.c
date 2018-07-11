@@ -374,6 +374,13 @@ parse_value(struct parser *p, struct strings *strings, int *nextc)
         *nextc = get(p);
         beg = escape_string(beg, end);
 
+        /* Negative zero? */
+        if (end - beg == 2 && beg[0] == '-' && beg[1] == '0') {
+            value->value.f = -0.0f;
+            value->type = VALUE_FLOAT;
+            return value;
+        }
+
         /* Is it an integer? */
         errno = 0;
         i = strtol(beg, &end, 10);
@@ -386,7 +393,7 @@ parse_value(struct parser *p, struct strings *strings, int *nextc)
         /* Is it a float? */
         errno = 0;
         f = (float)strtod(beg, &end);
-        if (!*end && (i || !errno)) {
+        if (!*end && (f || !errno)) {
             value->value.f = f;
             value->type = VALUE_FLOAT;
             return value;
