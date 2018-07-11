@@ -132,15 +132,15 @@ strings_push(struct strings *t, char *str)
 static int
 cmp(const void *a, const void *b)
 {
-    const struct string *sa = a;
-    const struct string *sb = b;
-    if (!sa->s && !sb->s)
+    const struct string **sa = (void *)a;
+    const struct string **sb = (void *)b;
+    if (!*sa && !*sb)
         return 0;
-    if (!sa->s)
+    if (!*sa)
         return 1;
-    if (!sb->s)
+    if (!*sb)
         return -1;
-    return strcmp(sa->s, sb->s);
+    return strcmp((*sa)->s, (*sb)->s);
 }
 
 /* Sort the string table and compute table offsets. */
