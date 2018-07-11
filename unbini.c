@@ -226,7 +226,7 @@ main(int argc, char **argv)
             /* validate entry struct */
             if (name >= textlen)
                 fatal("invalid entry text offset, aborting");
-            if (nvalue * 5UL > p - buf + textlen)
+            if (nvalue * 5UL > (unsigned long)(text - p))
                 fatal("truncated entry value, aborting");
 
             /* print each value */
