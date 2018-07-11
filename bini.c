@@ -84,53 +84,49 @@ strings_init(struct strings *t, size_t cap)
         t->strings[i] = 0;
 }
 
-static void
-strings_insert(struct strings *t, struct string *s)
-{
-    unsigned long mask = (unsigned long)(t->cap - 1);
-    unsigned long len = (unsigned long)strlen(s->s) + 1;
-    unsigned long i = murmurhash3(s->s, len, 0) & mask;
-    if (t->count * 2 > t->cap) {
-        size_t j;
-        struct strings grow[1];
-        strings_init(grow, t->cap * 2);
-        for (j = 0; j < t->cap; j++)
-            if (t->strings[j])
-                strings_insert(grow, t->strings[j]);
-        free(t->strings);
-        *t = *grow;
-    }
-    while (t->strings[i])
-        i = (i + 1) & mask;
-    t->strings[i] = s;
-    t->count++;
-}
-
-static struct string *
+static struct string **
 strings_find(struct strings *t, char *s)
 {
     unsigned long mask = (unsigned long)(t->cap - 1);
     unsigned long len = (unsigned long)strlen(s) + 1;
     unsigned long i = murmurhash3(s, len, 0) & mask;
-    while (t->strings[i]) {
-        if (!strcmp(t->strings[i]->s, s))
-            return t->strings[i];
+    while (t->strings[i] && strcmp(t->strings[i]->s, s))
         i = (i + 1) & mask;
+    return &t->strings[i];
+}
+
+static void
+strings_grow(struct strings *t)
+{
+    size_t i;
+    struct strings grow[1];
+    strings_init(grow, t->cap * 2);
+    for (i = 0; i < t->cap; i++) {
+        if (t->strings[i]) {
+            *strings_find(grow, t->strings[i]->s) = t->strings[i];
+            grow->count++;
+        }
     }
-    return 0;
+    free(t->strings);
+    *t = *grow;
 }
 
 static struct string *
-strings_push(struct strings *t, char *s)
+strings_push(struct strings *t, char *str)
 {
-    struct string *ss;
-    ss = strings_find(t, s);
-    if (!ss) {
-        ss = xmalloc(sizeof(*ss));
-        ss->s = s;
-        strings_insert(t, ss);
+    struct string **dst;
+    dst = strings_find(t, str);
+    if (!*dst) {
+        struct string *s = xmalloc(sizeof(*s));
+        s->s = str;
+        if (t->count > t->cap / 2) {
+            strings_grow(t);
+            dst = strings_find(t, str);
+        }
+        *dst = s;
+        t->count++;
     }
-    return ss;
+    return *dst;
 }
 
 static int
