@@ -288,6 +288,7 @@ escape_string(char *beg, char *end)
 {
     if (*beg == '"') {
         char *s;
+        beg++;
         for (s = beg; s < end; s++) {
             if (*s == '"') {
                 memmove(s, s + 1, end - s);
