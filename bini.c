@@ -330,12 +330,15 @@ struct entry {
     struct entry *next;
     struct string *name;
     struct value *values;
+    int nvalue;
 };
 
 struct section {
     struct section *next;
     struct string *name;
     struct entry *entries;
+    long nentry;
+    unsigned long size;
 };
 
 static struct value *
@@ -399,7 +402,6 @@ static struct entry *
 parse_entry(struct parser *p, struct strings *strings)
 {
     int c;
-    int nvalue = 0;
     char *beg, *end;
     struct value *value;
     struct value *tail = 0;
@@ -439,6 +441,7 @@ parse_entry(struct parser *p, struct strings *strings)
     entry->next = 0;
     entry->name = strings_push(strings, beg);
     entry->values = 0;
+    entry->nvalue = 0;
 
     if (!skip_blank(p))
         return entry;
@@ -460,7 +463,7 @@ parse_entry(struct parser *p, struct strings *strings)
             tail->next = value;
             tail = tail->next;
         }
-        if (++nvalue > 255)
+        if (++entry->nvalue > 255)
             error(p, "too many values in one entry");
 
         /* Check for more values */
@@ -486,7 +489,6 @@ parse_section(struct parser *p, struct strings *strings)
 {
     int c;
     char *beg, *end;
-    long nentry = 0;
     struct entry *entry;
     struct entry *tail = 0;
     struct section *section = 0;
@@ -523,6 +525,8 @@ parse_section(struct parser *p, struct strings *strings)
     section->next = 0;
     section->name = strings_push(strings, beg);
     section->entries = 0;
+    section->nentry = 0;
+    section->size = 4;
 
     /* Parse entries */
     while ((entry = parse_entry(p, strings))) {
@@ -532,8 +536,9 @@ parse_section(struct parser *p, struct strings *strings)
             tail->next = entry;
             tail = tail->next;
         }
-        if (++nentry > 65535)
+        if (++section->nentry > 65535)
             error(p, "too many entries in one section");
+        section->size += 3 + entry->nvalue * 5;
     }
 
     return section;
@@ -637,21 +642,10 @@ main(int argc, char **argv)
         if (!tail->next)
             break;
         tail = tail->next;
+        outlen += tail->size;
     }
 
     strings_finalize(&strings);
-
-    /* Compute string table offset */
-    for (section = head.next; section; section = section->next) {
-        struct entry *entry;
-        outlen += 4;
-        for (entry = section->entries; entry; entry = entry->next) {
-            struct value *value;
-            outlen += 3;
-            for (value = entry->values; value; value = value->next)
-                outlen += 5;
-        }
-    }
 
     /* Write bini header */
     store_u32(0x494e4942UL, out);
@@ -660,24 +654,18 @@ main(int argc, char **argv)
 
     /* Write all structs */
     for (section = head.next; section; section = section->next) {
-        unsigned nentry = 0;
         struct entry *entry;
-        for (entry = section->entries; entry; entry = entry->next)
-            nentry++;
 
         /* Write section */
         store_u16(section->name->offset, out);
-        store_u16(nentry, out);
+        store_u16(section->nentry, out);
 
         for (entry = section->entries; entry; entry = entry->next) {
-            int nvalue = 0;
             struct value *value;
-            for (value = entry->values; value; value = value->next)
-                nvalue++;
 
             /* Write entry */
             store_u16(entry->name->offset, out);
-            fputc(nvalue, out);
+            fputc(entry->nvalue, out);
 
             for (value = entry->values; value; value = value->next) {
                 /* Write value */
@@ -703,7 +691,6 @@ main(int argc, char **argv)
         size_t len = strlen(s) + 1;
         fwrite(s, len, 1, out);
     }
-
 
     /* Cleanup */
     section = head.next;
