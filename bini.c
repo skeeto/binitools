@@ -586,6 +586,13 @@ main(int argc, char **argv)
         }
     }
 
+    if (out == stdout) {
+#ifdef _WIN32
+        int _setmode(int, int);
+        _setmode(_fileno(stdout), 0x8000);
+#endif
+    }
+
     /* Use argument rather than standard input */
     if (argv[optind]) {
         if (argv[optind + 1])
@@ -594,11 +601,6 @@ main(int argc, char **argv)
         if (!in)
             fatal("%s: %s", strerror(errno), argv[optind]);
         parser.filename = argv[optind];
-    } else {
-#ifdef _WIN32
-        int _setmode(int, int);
-        _setmode(_fileno(stdout), 0x8000);
-#endif
     }
 
     strings = trie_create();
