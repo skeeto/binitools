@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "trie.h"
 #include "common.h"
 #include "getopt.h"
 
@@ -15,202 +16,127 @@ xisblank(int c)
     return c == ' ' || c == '\t';
 }
 
-static unsigned long
-murmurhash3(const void *key, unsigned long len, unsigned long seed)
+static void
+reverse(char *s)
 {
-    unsigned long mask32 = 0xffffffffUL;
-    unsigned long hash = seed & mask32;
-    unsigned long nblocks = (len & mask32) / 4;
-    unsigned char *p = (unsigned char *)key;
-    unsigned char *tail = (unsigned char *)key + nblocks * 4;
-    unsigned long k1 = 0;
-    unsigned long i;
-    for (i = 0; i < nblocks; i++) {
-        unsigned long k = p[i * 4 + 0] <<  0 |
-                          p[i * 4 + 1] <<  8 |
-                          p[i * 4 + 2] << 16 |
-                          p[i * 4 + 3] << 24;
-        k = (k * 0xcc9e2d51UL) & mask32;
-        k = (k << 15) | (k >> 17);
-        k = (k * 0x1b873593UL) & mask32;
-        hash = hash ^ k;
-        hash = ((hash << 13) | (hash >> 19)) * 5 + 0xe6546b64UL;
-        hash &= mask32;
+    size_t i = 0;
+    size_t len = strlen(s);
+    for (i = 0; i < len / 2; i++) {
+        int tmp = s[i];
+        s[i] = s[len - i - 1];
+        s[len - i - 1] = (char)tmp;
     }
-    switch (len & 3UL) {
-        case 3:
-            k1 ^= tail[2] << 16;
-            /* FALLTHROUGH */
-        case 2:
-            k1 ^= tail[1] << 8;
-            /* FALLTHROUGH */
-        case 1:
-            k1 ^= tail[0];
-            k1 = (k1 * 0xcc9e2d51UL) & mask32;
-            k1 = (k1 << 15) | (k1 >> 17);
-            k1 = (k1 * 0x1b873593UL) & mask32;
-            hash ^= k1;
-    }
-    hash ^= len;
-    hash ^= hash >> 16;
-    hash *= 0x85ebca6bUL;
-    hash ^= (hash & mask32) >> 13;
-    hash *= 0xc2b2ae35UL;
-    hash ^= (hash & mask32) >> 16;
-    return hash & mask32;
 }
 
 /* String intern table */
 
 struct string {
     char *s;
-    struct string *parent; /* if this string is the tail of another */
-    unsigned offset;       /* Offset in the final string table */
-    unsigned tail;         /* Offset into its parent */
+    struct string *parent;
+    long offset;
 };
 
-struct strings {
-    size_t cap;
-    size_t count;
-    struct string **strings;
-};
-
-static void
-strings_init(struct strings *t, size_t cap)
-{
-    size_t i;
-    t->cap = cap;
-    t->count = 0;
-    t->strings = xreallocarray(0, t->cap, sizeof(t->strings[0]));
-    for (i = 0; i < cap; i++)
-        t->strings[i] = 0;
-}
-
-static struct string **
-strings_find(struct strings *t, char *s)
-{
-    unsigned long mask = (unsigned long)(t->cap - 1);
-    unsigned long len = (unsigned long)strlen(s) + 1;
-    unsigned long i = murmurhash3(s, len, 0) & mask;
-    while (t->strings[i] && strcmp(t->strings[i]->s, s))
-        i = (i + 1) & mask;
-    return &t->strings[i];
-}
-
-static void
-strings_grow(struct strings *t)
-{
-    size_t i;
-    struct strings grow[1];
-    strings_init(grow, t->cap * 2);
-    for (i = 0; i < t->cap; i++) {
-        if (t->strings[i]) {
-            *strings_find(grow, t->strings[i]->s) = t->strings[i];
-            grow->count++;
-        }
-    }
-    free(t->strings);
-    *t = *grow;
-}
-
-static struct string *
-strings_push(struct strings *t, char *str, struct string *parent)
-{
-    struct string **dst;
-    dst = strings_find(t, str);
-    if (*dst) {
-        if (parent && !(*dst)->parent) {
-            /* Rebase this onto the new parent */
-            (*dst)->parent = parent;
-            (*dst)->tail = (unsigned)(str - parent->s);
-        }
-    } else {
-        struct string *s = xmalloc(sizeof(*s));
-        s->s = str;
-        s->parent = parent;
-        s->tail = parent ? (unsigned)(str - parent->s) : 0;
-        if (t->count > t->cap / 2) {
-            strings_grow(t);
-            dst = strings_find(t, str);
-        }
-        *dst = s;
-        t->count++;
-    }
-    return *dst;
-}
-
-/* Put this string and all its tails in the string table.
- */
-static struct string *
-strings_push_all(struct strings *t, char *str)
-{
-    char *p;
-    size_t len = strlen(str);
-    struct string *s = strings_push(t, str, 0);
-    if (len > 65535)
-        len = 65535;
-    for (p = str + 1; p < str + len; p++)
-        strings_push(t, p, s);
-    return s;
-}
-
-static int
-cmp(const void *a, const void *b)
-{
-    const struct string **sa = (void *)a;
-    const struct string **sb = (void *)b;
-    if (!*sa && !*sb)
-        return 0;
-    if (!*sa)
-        return 1;
-    if (!*sb)
-        return -1;
-    return strcmp((*sa)->s, (*sb)->s);
-}
-
-/* Sort the string table and compute table offsets. */
 static long
-strings_finalize(struct strings *t)
+string_offset(struct string *s)
 {
-    size_t i;
-    long offset = 0;
-
-    qsort(t->strings, t->cap, sizeof(*t->strings), cmp);
-
-    for (i = 0; i < t->count; i++) {
-        if (!t->strings[i]->parent) {
-            if (offset > 65535)
-                fatal("too many strings");
-            t->strings[i]->offset = offset;
-            offset += (long)strlen(t->strings[i]->s) + 1;
-        }
+    long parent, offset;
+    if (s->offset != -1) {
+        offset = s->offset;
+    } else {
+        parent = string_offset(s->parent);
+        offset = parent + (long)strlen(s->parent->s) - (long)strlen(s->s);
+        if (offset > 65535)
+            fatal("too many strings");
     }
-    for (i = 0; i < t->count; i++) {
-        struct string *parent = t->strings[i]->parent;
-        if (parent) {
-            long tail = t->strings[i]->tail;
-            while (parent->parent) {
-                /* Chase down to a string actually in the string table */
-                tail += parent->tail;
-                parent = parent->parent;
-            }
-            tail += parent->offset;
-            if (tail > 65535)
-                fatal("too many strings");
-            t->strings[i]->offset = tail;
-        }
-    }
-
     return offset;
 }
 
-static void
-strings_destroy(struct strings *t)
+static struct string *
+strings_push(struct trie *t, char *str)
 {
-    size_t i;
-    for (i = 0; i < t->count; i++)
-        free(t->strings[i]);
-    free(t->strings);
+    struct string *s;
+    reverse(str);
+    s = trie_search(t, str);
+    if (!s) {
+        s = xmalloc(sizeof(*s));
+        s->s = str;
+        s->parent = 0;
+        s->offset = -1;
+        if (trie_insert(t, str, s))
+            fatal("out of memory");
+    }
+    reverse(str);
+    return s;
+}
+
+/* Child to be connected to next-visited string */
+static struct string *child = 0;
+
+static int
+compute_offset(const char *key, void *data, void *arg, int nsiblings)
+{
+    struct string *s = data;
+    long *offset = arg;
+    if (child)
+        child->parent = s;
+    if (nsiblings) {
+        /* Secondary string, connect it to the next visited node */
+        child = s;
+    } else {
+        /* Primary string, append it to the table */
+        if (*offset > 65535)
+            fatal("too many strings");
+        s->offset = *offset;
+        *offset += (long)strlen(key) + 1;
+        child = 0;
+    }
+    return 0;
+}
+
+/* Compute string table offsets. */
+static long
+strings_finalize(struct trie *t)
+{
+    long offset = 0;
+    if (trie_visit(t, "", compute_offset, &offset))
+        fatal("out of memory");
+    return offset;
+}
+
+static int
+free_visitor(const char *key, void *data, void *arg, int nsiblings)
+{
+    (void)key;
+    (void)arg;
+    (void)nsiblings;
+    free(data);
+    return 0;
+}
+
+static void
+strings_free(struct trie *t)
+{
+    trie_visit(t, "", free_visitor, 0);
+    trie_free(t);
+}
+
+static int
+write_visit(const char *key, void *data, void *arg, int nsiblings)
+{
+    FILE *out = arg;
+    struct string *s = data;
+    size_t len = strlen(s->s) + 1;
+    (void)key;
+    if (!nsiblings)
+        fwrite(s->s, len, 1, out);
+    return 0;
+}
+
+static void
+strings_write(struct trie *t, FILE *out)
+{
+    if (trie_visit(t, "", write_visit, out))
+        fatal("out of memory");
 }
 
 /* Parser stream */
@@ -385,7 +311,7 @@ struct section {
 };
 
 static struct value *
-parse_value(struct parser *p, struct strings *strings, int *nextc)
+parse_value(struct parser *p, struct trie *strings, int *nextc)
 {
     int c;
     char *beg, *end;
@@ -402,7 +328,7 @@ parse_value(struct parser *p, struct strings *strings, int *nextc)
         end = p->p;
         *nextc = get(p);
         beg = escape_string(beg, end);
-        value->value.s = strings_push_all(strings, beg);
+        value->value.s = strings_push(strings, beg);
         value->type = VALUE_STRING;
         return value;
 
@@ -442,14 +368,14 @@ parse_value(struct parser *p, struct strings *strings, int *nextc)
         }
 
         /* Must just be a simple string */
-        value->value.s = strings_push_all(strings, beg);
+        value->value.s = strings_push(strings, beg);
         value->type = VALUE_STRING;
         return value;
     }
 }
 
 static struct entry *
-parse_entry(struct parser *p, struct strings *strings)
+parse_entry(struct parser *p, struct trie *strings)
 {
     int c;
     char *beg, *end;
@@ -489,7 +415,7 @@ parse_entry(struct parser *p, struct strings *strings)
     beg = escape_string(beg, end);
     entry = xmalloc(sizeof(*entry));
     entry->next = 0;
-    entry->name = strings_push_all(strings, beg);
+    entry->name = strings_push(strings, beg);
     entry->values = 0;
     entry->nvalue = 0;
 
@@ -535,7 +461,7 @@ parse_entry(struct parser *p, struct strings *strings)
 }
 
 static struct section *
-parse_section(struct parser *p, struct strings *strings)
+parse_section(struct parser *p, struct trie *strings)
 {
     int c;
     char *beg, *end;
@@ -573,7 +499,7 @@ parse_section(struct parser *p, struct strings *strings)
     beg = escape_string(beg, end);
     section = xmalloc(sizeof(*section));
     section->next = 0;
-    section->name = strings_push_all(strings, beg);
+    section->name = strings_push(strings, beg);
     section->entries = 0;
     section->nentry = 0;
     section->size = 4;
@@ -632,7 +558,6 @@ usage(FILE *f)
 int
 main(int argc, char **argv)
 {
-    size_t i;
     int option;
     unsigned long inlen;
     char *inbuf;
@@ -643,7 +568,7 @@ main(int argc, char **argv)
     struct section *section;
     struct section *tail = &head;
     struct parser parser = {"stdin", 1, 0, 0};
-    struct strings strings;
+    struct trie *strings;
 
     while ((option = getopt(argc, argv, "ho:")) != -1) {
         switch (option) {
@@ -676,7 +601,7 @@ main(int argc, char **argv)
 #endif
     }
 
-    strings_init(&strings, 256);
+    strings = trie_create();
 
     /* Initialize the parser */
     parser.p = inbuf = slurp(in, &inlen);
@@ -688,14 +613,14 @@ main(int argc, char **argv)
 
     /* Parse the input into sections */
     for (;;) {
-        tail->next = parse_section(&parser, &strings);
+        tail->next = parse_section(&parser, strings);
         if (!tail->next)
             break;
         tail = tail->next;
         outlen += tail->size;
     }
 
-    strings_finalize(&strings);
+    strings_finalize(strings);
 
     /* Write bini header */
     store_u32(0x494e4942UL, out);
@@ -707,14 +632,14 @@ main(int argc, char **argv)
         struct entry *entry;
 
         /* Write section */
-        store_u16(section->name->offset, out);
+        store_u16(string_offset(section->name), out);
         store_u16(section->nentry, out);
 
         for (entry = section->entries; entry; entry = entry->next) {
             struct value *value;
 
             /* Write entry */
-            store_u16(entry->name->offset, out);
+            store_u16(string_offset(entry->name), out);
             fputc(entry->nvalue, out);
 
             for (value = entry->values; value; value = value->next) {
@@ -728,7 +653,7 @@ main(int argc, char **argv)
                         store_u32(conv_f32(value->value.f), out);
                         break;
                     case 3:
-                        store_u32(value->value.s->offset, out);
+                        store_u32(string_offset(value->value.s), out);
                         break;
                 }
             }
@@ -736,13 +661,7 @@ main(int argc, char **argv)
     }
 
     /* Write string table */
-    for (i = 0; i < strings.count; i++) {
-        if (!strings.strings[i]->parent) {
-            char *s = strings.strings[i]->s;
-            size_t len = strlen(s) + 1;
-            fwrite(s, len, 1, out);
-        }
-    }
+    strings_write(strings, out);
 
     /* Cleanup */
     section = head.next;
@@ -763,7 +682,7 @@ main(int argc, char **argv)
         section = section->next;
         free(sdead);
     }
-    strings_destroy(&strings);
+    strings_free(strings);
     free(inbuf);
 
     if (fclose(out))
