@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PROGRAM_NAME "unbini"
+
 #include "common.h"
 #include "getopt.h"
 

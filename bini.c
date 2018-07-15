@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PROGRAM_NAME "bini"
+
 #include "trie.h"
 #include "common.h"
 #include "getopt.h"
@@ -19,8 +21,7 @@ xisblank(int c)
 static void
 reverse(char *s)
 {
-    size_t i = 0;
-    size_t len = strlen(s);
+    size_t i, len = strlen(s);
     for (i = 0; i < len / 2; i++) {
         int tmp = s[i];
         s[i] = s[len - i - 1];
@@ -381,7 +382,7 @@ parse_entry(struct parser *p, struct trie *strings)
     char *beg, *end;
     struct value *value;
     struct value *tail = 0;
-    struct entry *entry = 0;
+    struct entry *entry;
 
     if (!skip_space(p))
         return 0;
@@ -467,7 +468,7 @@ parse_section(struct parser *p, struct trie *strings)
     char *beg, *end;
     struct entry *entry;
     struct entry *tail = 0;
-    struct section *section = 0;
+    struct section *section;
 
     if (!skip_space(p))
         return 0; /* EOF */

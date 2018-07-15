@@ -10,7 +10,7 @@ fatal(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stderr, "bini: ");
+    fprintf(stderr, PROGRAM_NAME ": ");
     vfprintf(stderr, fmt, ap);
     fputc('\n', stderr);
     va_end(ap);
