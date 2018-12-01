@@ -333,6 +333,9 @@ parse_value(struct parser *p, struct trie *strings, int *nextc)
         value->type = VALUE_STRING;
         return value;
 
+    } else if (c == '\r' || c == '\n' || c == ',') {
+        error(p, "missing/empty value");
+
     } else {
         long i;
         float f;
