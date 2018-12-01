@@ -12,10 +12,18 @@
 #include "getopt.h"
 
 static int
-xisblank(int c)
+xisplainspace(int c)
 {
-    /* isblank() is not in C89 */
-    return c == ' ' || c == '\t';
+    /* isspace() without newlines */
+    return c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v';
+}
+
+static int
+xisspace(int c)
+{
+    /* isspace() changes depending on the locale */
+    return c == ' '  || c == '\f' || c == '\n' ||
+           c == '\r' || c == '\t' || c == '\v';
 }
 
 static void
@@ -190,7 +198,7 @@ skip_space(struct parser *p)
 {
     for (;;) {
         int c;
-        for (c = get(p); c != -1 && isspace(c); c = get(p))
+        for (c = get(p); c != -1 && xisspace(c); c = get(p))
             ;
         if (c == -1)
             return 0;
@@ -213,7 +221,7 @@ static int
 skip_blank(struct parser *p)
 {
     int c;
-    for (c = get(p); c != -1 && xisblank(c); c = get(p))
+    for (c = get(p); c != -1 && xisplainspace(c); c = get(p))
         ;
     if (c != -1)
         unget(p);
@@ -265,9 +273,9 @@ escape_string(char *beg, char *end)
             }
         }
     } else {
-        while (isspace(*beg))
+        while (xisspace(*beg))
             beg++;
-        while (isspace(end[-1]))
+        while (xisspace(end[-1]))
             end--;
     }
     *end = 0;
