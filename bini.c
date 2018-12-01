@@ -175,6 +175,8 @@ get(struct parser *p)
     int c = -1;
     if (p->p < p->end) {
         c = *(unsigned char *)(p->p);
+        if (!c)
+            error(p, "invalid NUL byte");
         p->p++;
         if (c == '\n')
             p->line++;
