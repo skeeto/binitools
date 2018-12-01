@@ -345,6 +345,7 @@ parse_value(struct parser *p, struct trie *strings, int *nextc)
 
     } else if (c == '\r' || c == '\n' || c == ',') {
         error(p, "missing/empty value");
+        return 0;
 
     } else {
         long i;
