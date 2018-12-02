@@ -601,22 +601,25 @@ main(int argc, char **argv)
         }
     }
 
-    if (out == stdout) {
-#ifdef _WIN32
-        int _setmode(int, int);
-        _setmode(_fileno(stdout), 0x8000);
-#endif
-    }
-
     /* Use argument rather than standard input */
     if (argv[optind]) {
         if (argv[optind + 1])
             fatal("too many input arguments");
-        in = fopen(argv[optind], "r");
+        in = fopen(argv[optind], "rb");
         if (!in)
             fatal("%s: %s", strerror(errno), argv[optind]);
         parser.filename = argv[optind];
     }
+
+#ifdef _WIN32
+    {
+        int _setmode(int, int);
+        if (out == stdout)
+            _setmode(_fileno(stdout), 0x8000);
+        if (in == stdin)
+            _setmode(_fileno(stdin), 0x8000);
+    }
+#endif
 
     strings = trie_create();
 

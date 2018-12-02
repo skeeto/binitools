@@ -150,7 +150,7 @@ main(int argc, char **argv)
                 usage(stdout);
                 exit(EXIT_SUCCESS);
             case 'o':
-                out = fopen(optarg, "w");
+                out = fopen(optarg, "wb");
                 if (!out)
                     fatal("%s: %s", strerror(errno), optarg);
                 break;
@@ -167,13 +167,17 @@ main(int argc, char **argv)
         in = fopen(argv[optind], "rb");
         if (!in)
             fatal("%s: %s", strerror(errno), argv[optind]);
-    } else {
-        /* Use standard input */
-        #ifdef _WIN32
-        int _setmode(int, int);
-        _setmode(_fileno(stdin), 0x8000);
-        #endif
     }
+
+#ifdef _WIN32
+    {
+        int _setmode(int, int);
+        if (out == stdout)
+            _setmode(_fileno(stdout), 0x8000);
+        if (in == stdin)
+            _setmode(_fileno(stdin), 0x8000);
+    }
+#endif
 
     buf = slurp(in, &len);
 
