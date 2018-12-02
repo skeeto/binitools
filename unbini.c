@@ -117,7 +117,7 @@ print_minfloat(float f, FILE *out)
     int i;
     char buf[64];
     for (i = 1; i < 9; i++) {
-        sprintf(buf, "%.*g", i, f);
+        sprintf(buf, "%#.*g", i, f);
         if (f == (float)strtod(buf, 0)) {
             fputs(buf, out);
             return;
