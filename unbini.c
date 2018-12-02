@@ -53,7 +53,7 @@ conv_f32(unsigned long x)
 static void
 print_special(const unsigned char *s, char *special, FILE *out)
 {
-    int simple = special && !strpbrk((char *)s, special);
+    int simple = *s != 0 && special && !strpbrk((char *)s, special);
     if (simple) {
         fputs((char *)s, out);
     } else {
