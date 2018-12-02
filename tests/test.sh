@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 BINI=../bini
 UNBINI=../unbini
@@ -10,7 +10,15 @@ total=0
 for ini in valid/*; do
     $BINI $ini 1>/dev/null 2>/dev/null && true;
     case $? in
-        0)  ;; # expected
+        0)  # expected: now test idempotency
+            hash0=$($BINI $ini | sha1sum)
+            hash1=$($BINI $ini | $UNBINI | $BINI | sha1sum)
+            if [ ! "$hash0" = "$hash1" ]; then
+                printf 'not idempotent: %s\n' $ini 1>&2
+                fail=$((fail + 1))
+            fi
+            total=$((total + 1))
+            ;;
         1)  printf 'rejected: %s\n' $ini 1>&2
             fail=$((fail + 1))
             ;;
@@ -18,17 +26,6 @@ for ini in valid/*; do
             fail=$((fail + 1))
             ;;
     esac
-    total=$((total + 1))
-done
-
-# Test idompotency of valid inputs
-for ini in valid/*; do
-    hash0=$($BINI $ini | sha1sum)
-    hash1=$($BINI $ini | $UNBINI | $BINI | sha1sum)
-    if [ ! "$hash0" = "$hash1" ]; then
-        printf 'not idempotent: %s\n' $ini 1>&2
-        fail=$((fail + 1))
-    fi
     total=$((total + 1))
 done
 
@@ -47,7 +44,7 @@ for ini in invalid/*; do
     total=$((total + 1))
 done
 
-# Print test report
+# Print report
 if [ $fail -eq 0 ]; then
     printf '\033[1;92mPASS\033[0m'
     code=0
