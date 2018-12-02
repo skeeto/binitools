@@ -5,6 +5,23 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#define PROGRAM_VERSION "2.3"
+
+static void
+usage(FILE *f)
+{
+    fprintf(f, "usage: " PROGRAM_NAME " [-o path] [<INI|INI]\n");
+    fprintf(f, "  -h       print this message\n");
+    fprintf(f, "  -o path  output to a file (default: standard output)\n");
+    fprintf(f, "  -V       print version information\n");
+}
+
+static void
+version(void)
+{
+    printf(PROGRAM_NAME " " PROGRAM_VERSION "\n");
+}
+
 static void
 fatal(const char *fmt, ...)
 {

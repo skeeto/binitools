@@ -126,14 +126,6 @@ print_minfloat(float f, FILE *out)
     fprintf(out, "%.9g", f);
 }
 
-static void
-usage(FILE *f)
-{
-    fprintf(f, "usage: unbini [-o path] [<BINI|BINI]\n");
-    fprintf(f, "  -h       print this message\n");
-    fprintf(f, "  -o path  output to a file (default: standard output)\n");
-}
-
 int
 main(int argc, char **argv)
 {
@@ -144,7 +136,7 @@ main(int argc, char **argv)
     unsigned long bini, vers, textoff;
     unsigned char *buf, *text, *p;
 
-    while ((option = getopt(argc, argv, "ho:")) != -1) {
+    while ((option = getopt(argc, argv, "ho:V")) != -1) {
         switch (option) {
             case 'h':
                 usage(stdout);
@@ -154,6 +146,9 @@ main(int argc, char **argv)
                 if (!out)
                     fatal("%s: %s", strerror(errno), optarg);
                 break;
+            case 'V':
+                version();
+                exit(EXIT_SUCCESS);
             default:
                 usage(stderr);
                 exit(EXIT_FAILURE);
