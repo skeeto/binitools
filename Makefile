@@ -10,5 +10,8 @@ bini: bini.c common.h getopt.h trie.h
 unbini: unbini.c common.h getopt.h
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ unbini.c $(LDLIBS)
 
+check: bini unbini
+	(cd tests && ./test.sh)
+
 clean:
 	rm -f bini bini.exe unbini unbini.exe
