@@ -12,16 +12,16 @@
 static unsigned long
 parse_u32(const unsigned char *p)
 {
-    return (unsigned long)p[0] <<  0 | 
-           (unsigned long)p[1] <<  8 | 
-           (unsigned long)p[2] << 16 | 
+    return (unsigned long)p[0] <<  0 |
+           (unsigned long)p[1] <<  8 |
+           (unsigned long)p[2] << 16 |
            (unsigned long)p[3] << 24;
 }
 
 static unsigned
 parse_u16(const unsigned char *p)
 {
-    return (unsigned)p[0] <<  0 | 
+    return (unsigned)p[0] <<  0 |
            (unsigned)p[1] <<  8;
 }
 
@@ -95,7 +95,7 @@ print_string(const unsigned char *s, FILE *out)
         print_special(s, 0, out);
         return;
     }
-    
+
     /* Does it look an integer? Quote it. */
     errno = 0;
     i = strtol((char *)s, &end, 10);
@@ -217,7 +217,7 @@ main(int argc, char **argv)
             /* is there enough room for this entry? */
             if (p > text - 3)
                 fatal("truncated entry, aborting");
-            
+
             /* parse entry struct */
             name = parse_u16(p);
             nvalue = p[2];
