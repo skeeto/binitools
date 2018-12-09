@@ -114,15 +114,28 @@ static void
 print_minfloat(float f, FILE *out)
 {
     int i;
-    char buf[64];
-    for (i = 1; i < 9; i++) {
-        sprintf(buf, "%#.*g", i, f);
+    int bestlen;
+    char best[32];
+
+    /* Assume %#.9g is valid and start with it as the best */
+    bestlen = sprintf(best, "%#.9g", f);
+
+    /* Try to find something shorter */
+    for (i = 8; i > 0; i--) {
+        char buf[sizeof(best)];
+        int len = sprintf(buf, "%#.*g", i, f);
         if (f == (float)strtod(buf, 0)) {
-            fputs(buf, out);
-            return;
+            /* It's valid, but is it shorter? */
+            if (len < bestlen) {
+                bestlen = len;
+                memcpy(best, buf, sizeof(buf));
+            }
+        } else {
+            /* Precision is now being lost, bailout */
+            break;
         }
     }
-    fprintf(out, "%.9g", f);
+    fwrite(best, bestlen, 1, out);
 }
 
 int
