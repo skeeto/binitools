@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#define PROGRAM_VERSION "2.3"
+#define PROGRAM_VERSION "2.4"
 
 static void
 usage(FILE *f)
