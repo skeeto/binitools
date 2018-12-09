@@ -240,7 +240,8 @@ parse_string(struct parser *p)
         if (c == '"') {
             c = get(p);
             if (c != '"') {
-                unget(p);
+                if (c != -1)
+                    unget(p);
                 return;
             }
         }
@@ -458,7 +459,7 @@ parse_entry(struct parser *p, struct trie *strings)
             error(p, "too many values in one entry");
 
         /* Check for more values */
-        if (c == '\n')
+        if (c == '\n' || c == -1)
             return entry;
         if (c == ';') {
             /* Can't unget the ';', so consume the comment */
