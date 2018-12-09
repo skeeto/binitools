@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdint.h> /* Only for uint32_t */
