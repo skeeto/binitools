@@ -338,10 +338,10 @@ static int
 trie_buffer_init(struct trie_buffer *b, const char *prefix)
 {
     b->fill = strlen(prefix);
-    b->size = b->fill > 256 ? b->fill * 2 : 256;
+    b->size = b->fill >= 256 ? b->fill * 2 : 256;
     b->buffer = malloc(b->size);
     if (b->buffer)
-        strcpy(b->buffer, prefix);
+        memcpy(b->buffer, prefix, b->fill + 1);
     return b->buffer ? 0 : -1;
 }
 
