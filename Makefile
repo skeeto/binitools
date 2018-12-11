@@ -10,8 +10,11 @@ bini: bini.c common.h getopt.h trie.h
 unbini: unbini.c common.h getopt.h
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ unbini.c $(LDLIBS)
 
-check: bini unbini
+tests/fletcher64: tests/fletcher64.c
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ tests/fletcher64.c $(LDLIBS)
+
+check: bini unbini tests/fletcher64
 	(cd tests && ./test.sh)
 
 clean:
-	rm -f bini bini.exe unbini unbini.exe
+	rm -f bini bini.exe unbini unbini.exe tests/fletcher64

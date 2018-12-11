@@ -11,8 +11,8 @@ for ini in valid/*; do
     $BINI $ini 1>/dev/null 2>/dev/null && true;
     case $? in
         0)  # expected: now test idempotency
-            hash0=$($BINI $ini | sha1sum)
-            hash1=$($BINI $ini | $UNBINI | $BINI | sha1sum)
+            hash0=$($BINI $ini | ./fletcher64)
+            hash1=$($BINI $ini | $UNBINI | $BINI | ./fletcher64)
             if [ ! "$hash0" = "$hash1" ]; then
                 printf 'not idempotent: %s\n' $ini 1>&2
                 fail=$((fail + 1))
