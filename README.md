@@ -23,6 +23,12 @@ These tools can be compiled using *any* ANSI C compiler, including GCC,
 Clang, and Visual Studio. On Windows, everything necessary for building
 testing, and debugging is available in [w64devkit][w64devkit].
 
+## Cross-compilation
+
+On Linux, to cross-compile for Windows and run the test suite:
+
+    make CC=x86_64-w64-mingw32-gcc EXE=.exe RUN=wine64 check
+
 ## Text format
 
 Comments begin with a semicolon (`;`) and run to the end of the line.
