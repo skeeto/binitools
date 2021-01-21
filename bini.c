@@ -1,3 +1,4 @@
+#define __USE_MINGW_ANSI_STDIO 0
 #include <errno.h>
 #include <stdio.h>
 #include <stdint.h> /* Only for uint32_t */
