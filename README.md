@@ -20,7 +20,8 @@ output file chosen with the `-o` switch.
     $ bini   -o market_commodities.ini     market_commodities.txt.ini 
 
 These tools can be compiled using *any* ANSI C compiler, including GCC,
-Clang, and Visual Studio.
+Clang, and Visual Studio. On Windows, everything necessary for building
+testing, and debugging is available in [w64devkit][w64devkit].
 
 ## Text format
 
@@ -126,4 +127,5 @@ offsets are byte addresses in this table. Freelancer doesn't have any
 particular encoding for these strings.
 
 
+[w64devkit]: https://github.com/skeeto/w64devkit
 [wiki]: https://en.wikipedia.org/wiki/Freelancer_(video_game)
