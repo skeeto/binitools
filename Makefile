@@ -3,7 +3,6 @@ CC      = cc
 CFLAGS  = -ansi -pedantic -Wall -Wextra -Os
 LDFLAGS = -s
 LDLIBS  =
-EXE     =
 
 all: bini$(EXE) unbini$(EXE)
 
